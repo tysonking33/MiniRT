@@ -16,7 +16,7 @@ void plotLineLow(int x0, int y0, int x1, int y1, void *mlx, void *mlx_win, t_dat
 
     for (int x = x0; x < x1; x++)
     {
-        plot_pixel(mlx, mlx_win, img, x, y);
+        plot_pixel(mlx, mlx_win, img, x, y, 0x00FF0000);
         if (d > 0)
         {
             y = y + yi;
@@ -45,7 +45,7 @@ void plotLineHigh(int x0, int y0, int x1, int y1, void *mlx, void *mlx_win, t_da
 
     for (int y = y0; y < y1; y++)
     {
-        plot_pixel(mlx, mlx_win, img, x, y);
+        plot_pixel(mlx, mlx_win, img, x, y, 0x00FF0000);
         if (d > 0)
         {
             x = x + xi;
