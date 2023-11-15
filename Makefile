@@ -6,7 +6,7 @@
 #    By: tytang <tytang@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/21 12:24:33 by tytang            #+#    #+#              #
-#    Updated: 2023/11/15 14:21:35 by tytang           ###   ########.fr        #
+#    Updated: 2023/11/15 15:33:17 by tytang           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,7 @@ FILES = main \
         draw_line \
         utils \
         draw_circle \
+		events \
 
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(FILES)))
 OBJS = $(SRCS:.c=.o)

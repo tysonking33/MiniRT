@@ -27,7 +27,15 @@ typedef struct	s_vars {
 void plot_pixel(void *mlx, void *mlx_win, t_data img, int x, int y,  int color);
 void my_mlx_pixel_put(t_data *data, int x, int y, int color);
 int	close_window(int keycode, t_vars *vars);
+int init_mlx_keyboard_hook(int keycode, t_vars *vars);
+int init_mlx_mouse_hook(int keycode, t_vars * vars);
 int main(void);
+
+/* in events.c */
+int	close_window(int keycode, t_vars *vars);
+int mlx_hook_camera_movements(int keycode, t_vars *vars);
+int mlx_hook_camera_rotation(int keycode, t_vars *vars);
+int mlx_hook_zoom(int keycode, t_vars *vars);
 
 /* in draw_line.c */
 void plotLineLow(int x0, int y0, int x1, int y1, void *mlx, void *mlx_win, t_data img);
