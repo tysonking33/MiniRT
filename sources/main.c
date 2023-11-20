@@ -76,10 +76,13 @@ int main(void)
     vars = malloc(sizeof (struct s_vars));
     t_data img;
 
+    int window_height = 1920;
+    int window_width = 1080;
+
     
     vars->mlx = mlx_init();
-    vars->win = mlx_new_window(vars->mlx, 500, 500, "Hello world!");
-    img.img = mlx_new_image(vars->mlx, 500, 500);
+    vars->win = mlx_new_window(vars->mlx, window_height, window_width, "Hello world!");
+    img.img = mlx_new_image(vars->mlx, window_height, window_width);
 
     //hooking things
     mlx_hook(vars->win, 3, 1L<<0, init_mlx_keyboard_hook, &vars);
@@ -87,8 +90,7 @@ int main(void)
 
 
 
-    //Bresenham_line_algorithm(50, 50, 1000, 1000, mlx, mlx_win, img);
-    //draw_shaded_circle(500, 500, 100, mlx, mlx_win, img);
-
+    //Bresenham_line_algorithm(50, 50, 1000, 1000, vars->mlx, vars->win, img);
+    draw_shaded_circle(500, 500, 100, vars->mlx, vars->win, img);
     mlx_loop(vars->mlx);
 }

@@ -117,22 +117,21 @@ void midpoint_circle_algorithm(int x_center, int y_center, int radius, void *mlx
 
 void draw_shaded_circle(int x_center, int y_center, int radius, void *mlx, void *mlx_win, t_data img)
 {
-    for (int y = -radius; y <= radius; y++)
-    {
-        printf("y: %d, radius: %d\n", y, radius);
-        for (int x = -radius; x <= radius; x++)
-        {
-            printf("y: %d,x: %d, radius: %d\n", y, x, radius);
+    int radius_squared = radius * radius;
 
-            float distance = sqrtf(x * x + y * y);
-            if (distance <= radius)
-            {
+    for (int y = -radius; y <= radius; y++) {
+        int y_squared = y * y;
+
+        for (int x = -radius; x <= radius; x++) {
+            int x_squared = x * x;
+            printf("y: %d,x: %d, radius: %d\n", y, x, radius);
+            if (x_squared + y_squared <= radius_squared) {
                 // Compute intensity based on distance
-                int intensity = (1.0 - distance/ radius) * 255;
+                int intensity = (1.0 - sqrtf(x_squared + y_squared) / radius) * 255;
                 int color = (intensity << 16) | (intensity << 8) | intensity;
 
-                plot_pixel(mlx, mlx_win, img, x_center + x,y_center + y, color);
-
+                // Update the image directly (assuming plot_pixel modifies img)
+                plot_pixel(mlx, mlx_win, img, x_center + x, y_center + y, color);
             }
         }
     }
