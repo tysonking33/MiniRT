@@ -3,6 +3,7 @@
 
 #include "../mlx/mlx.h"
 #include "../includes/minirt.h"
+#include "parse.h"
 #include <stdio.h>
 #include <math.h>
 #include <unistd.h>

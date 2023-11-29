@@ -92,5 +92,7 @@ int main(void)
 
     //Bresenham_line_algorithm(50, 50, 1000, 1000, vars->mlx, vars->win, img);
     draw_shaded_circle(500, 500, 100, vars->mlx, vars->win, img);
+    midpoint_circle_algorithm_empty(500, 500, 100, vars->mlx, vars->win, img);
+
     mlx_loop(vars->mlx);
 }

@@ -1,4 +1,4 @@
-#include "parse.h"
+#include "../includes/parse.h"
 
 #define BUFFER_SIZE 1024
 
@@ -158,6 +158,7 @@ int read_and_parse_file(char *filename, struct s_init *inital_data_struct)
 
             // Move to the next line
             ptr = newline + 1;
+
         }
 
         // Check if the last character read is a newline
@@ -228,6 +229,12 @@ int first_time_read(char *filename, struct s_init *inital_data_struct)
             //printf("current line1: %s\n", lineBuffer);
 
             // Move to the next line
+            if (lineBuffer[0] == 's')
+                inital_data_struct->sphere_array++;
+            else if (lineBuffer[0] == 'p')
+                inital_data_struct->plane_count++;
+            else if (lineBuffer[0] == 'c')
+                inital_data_struct->cylinder_count++;
             ptr = newline + 1;
         }
 
@@ -240,6 +247,13 @@ int first_time_read(char *filename, struct s_init *inital_data_struct)
 
             // Null-terminate the remaining part
             lineBuffer[remainingLength] = '\0';
+
+            if (lineBuffer[0] == 's')
+                inital_data_struct->sphere_array++;
+            else if (lineBuffer[0] == 'p')
+                inital_data_struct->plane_count++;
+            else if (lineBuffer[0] == 'c')
+                inital_data_struct->cylinder_count++;
 
             // Print the remaining part of the line
             //write(STDOUT_FILENO, lineBuffer, remainingLength);
@@ -263,7 +277,7 @@ int first_time_read(char *filename, struct s_init *inital_data_struct)
     return 0;
 }
 
-int main(int argc, char **argv)
+/*int main(int argc, char **argv)
 {
     if (argc == 2)
     {
@@ -286,4 +300,4 @@ int main(int argc, char **argv)
         read_and_parse_file(filename, inital_data_struct);
         print_values(inital_data_struct);
     }
-}
+}*/

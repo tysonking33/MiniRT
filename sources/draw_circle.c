@@ -117,6 +117,8 @@ void midpoint_circle_algorithm(int x_center, int y_center, int radius, void *mlx
 
 void draw_shaded_circle(int x_center, int y_center, int radius, void *mlx, void *mlx_win, t_data img)
 {
+    x_center += 50;
+    y_center += 50;
     int radius_squared = radius * radius;
 
     for (int y = -radius; y <= radius; y++) {
@@ -129,6 +131,7 @@ void draw_shaded_circle(int x_center, int y_center, int radius, void *mlx, void 
                 // Compute intensity based on distance
                 int intensity = (1.0 - sqrtf(x_squared + y_squared) / radius) * 255;
                 int color = (intensity << 16) | (intensity << 8) | intensity;
+                color += 0x00FF1200;
 
                 // Update the image directly (assuming plot_pixel modifies img)
                 plot_pixel(mlx, mlx_win, img, x_center + x, y_center + y, color);

@@ -6,7 +6,7 @@
 #    By: tytang <tytang@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/21 12:24:33 by tytang            #+#    #+#              #
-#    Updated: 2023/11/20 16:37:52 by tytang           ###   ########.fr        #
+#    Updated: 2023/11/22 14:03:04 by tytang           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,11 +25,14 @@ FILES = main \
         draw_circle \
 		events \
 		formulas \
+		parse_scene \
 
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(FILES)))
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
+	clear
+	./minirt
 
 $(NAME) : $(OBJS)
 	@$(MAKE) re -C ./libft

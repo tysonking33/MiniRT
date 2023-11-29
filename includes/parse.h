@@ -11,6 +11,8 @@
 #include <string.h>
 #include <stddef.h>
 
+#include "../libft/libft.h"
+
 typedef struct s_sphere_init {
     float *sphere_xyz;
     float sphere_diameter;
@@ -58,17 +60,12 @@ typedef struct s_init {
     struct s_cylinder_init *cylinder_array;
 }               t_init;
 
-/* in ft_split.h */
-static int count_words(const char *str, char c);
-static char *word_dup(const char *str, int start, int finish);
-char **ft_split(char const *s, char c);
-
 /* in parse_scene.c */
 int print_values(struct s_init *initial_data_struct);
 int parse_line(char *line, struct s_init *inital_data_struct);
 float *parse_float_array(char *token, char delimiter);
 int read_and_parse_file(char *filename, struct s_init *inital_data_struct);
 int first_time_read(char *filename, struct s_init* inital_data_struct);
-int main(int argc, char **argv);
+//int main(int argc, char **argv);
 
 #endif
