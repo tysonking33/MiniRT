@@ -100,3 +100,9 @@ float *convert_orthogonal_project_to_2d(float *vectoru, float *viewpoint_xyz)
     
     return result_vector;
 }
+
+
+float distance_between_two_points_3d(float *vector_a, float *vector_b)
+{
+    return sqrtf(pow(vector_a[0]-vector_b[0],2) + pow(vector_a[1]-vector_b[1],2) + pow(vector_a[2]-vector_b[2],2));
+}

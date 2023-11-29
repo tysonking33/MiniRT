@@ -127,7 +127,7 @@ Mouse code for MacOS:
     Scroll down : 5
 
 to make a shader given a point, calculate the distance from the center to the current point and the current point to the closest edge
-if distance_center_to_current_point + current_point_to_closest_edge = diameter
+if distance_center_to_current_point > radius
     true:
         inside circle
     else
