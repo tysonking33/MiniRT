@@ -1,8 +1,12 @@
 #ifndef MINIRT_H
 #define MINIRT_H
 
-#include "../mlx/mlx.h"
 #include "../includes/minirt.h"
+#include "../includes/parse.h"
+#include "../includes/vec3.h"
+#include "../includes/vec3_deviants.h"
+
+#include "../mlx/mlx.h"
 #include "parse.h"
 #include <stdio.h>
 #include <math.h>
@@ -38,10 +42,6 @@ int mlx_hook_camera_movements(int keycode, t_vars *vars);
 int mlx_hook_camera_rotation(int keycode, t_vars *vars);
 int mlx_hook_zoom(int keycode, t_vars *vars);
 
-/* in draw_line.c */
-void plotLineLow(int x0, int y0, int x1, int y1, void *mlx, void *mlx_win, t_data img);
-void plotLineLow(int x0, int y0, int x1, int y1, void *mlx, void *mlx_win, t_data img);
-void Bresenham_line_algorithm(int x0, int y0, int x1, int y1, void *mlx, void *mlx_win, t_data img);
 
 /* in utils.c */
 int integer_abs(int a);
@@ -65,7 +65,4 @@ float *orthogonal_projection_single_vec(float *vectoru, float *vectorv, float *s
 float *convert_orthogonal_project_to_2d(float *vectoru, float *viewpoint_xyz);
 float *find_unit_vector(float *vector, float length);
 
-/* in light_types.c */
-float *find_reflection_vector(float *incident, float *normal);
-float *find_refraction_vector(float *incident, float *normal);
 #endif

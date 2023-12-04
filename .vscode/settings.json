@@ -4,6 +4,8 @@
         "parse.h": "c",
         "__nullptr": "cpp",
         "limits": "cpp",
-        "type_traits": "cpp"
+        "type_traits": "cpp",
+        "vec3.h": "c",
+        "mlx.h": "c"
     }
 }
