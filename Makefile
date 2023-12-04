@@ -6,7 +6,7 @@
 #    By: tytang <tytang@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/21 12:24:33 by tytang            #+#    #+#              #
-#    Updated: 2023/11/22 14:03:04 by tytang           ###   ########.fr        #
+#    Updated: 2023/12/04 17:51:40 by tytang           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,13 +19,11 @@ LINKS = -I./includes -L./libft -lft -L./mlx -lmlx -framework OpenGL \
 
 SRCS_DIR = sources/
 
-FILES = main \
-        draw_line \
-        utils \
-        draw_circle \
-		events \
-		formulas \
-		parse_scene \
+FILES = events \
+        main \
+        parse_scene \
+		vec3_deviants \
+		vec3 \
 
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(FILES)))
 OBJS = $(SRCS:.c=.o)

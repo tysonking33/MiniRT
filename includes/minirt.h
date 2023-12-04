@@ -53,16 +53,4 @@ void midpoint_circle_algorithm(int x_center, int y_center, int radius, void *mlx
 void draw_shaded_circle(int x_center, int y_center, int radius, void *mlx, void *mlx_win, t_data img);
 
 
-/* in formulas.c */
-float * vector_addition(float *vectora, float *vectorb);
-float * vector_subtraction(float *vectora, float *vectorb);
-float dot_product(float *vectora, float *vectorb);
-float *vector_float_multiplication(float *vectora, float value);
-float vector_length(float *vectora);
-float *cross_product(float *vectora, float *vectorb);
-float *find_ray_equation(float *vectora, float *direction_vector, float parameter_value);
-float *orthogonal_projection_single_vec(float *vectoru, float *vectorv, float *singular_subspace);
-float *convert_orthogonal_project_to_2d(float *vectoru, float *viewpoint_xyz);
-float *find_unit_vector(float *vector, float length);
-
 #endif

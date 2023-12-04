@@ -1,20 +1,54 @@
-#ifndef VEC3_DEVIANTS_H
-#define VEC3_DEVIANTS_H
-
 #include "../includes/minirt.h"
 
 /* color start */
 
+struct s_color *set_color_x(struct s_color *this_color, float x)
+{
+    this_color->e[0] = x;
+    return this_color;
+}
+struct s_color *set_color_y(struct s_color *this_color, float y)
+{
+    this_color->e[1] = y;
+    return this_color;
+}
 
-struct s_color *create_color(struct s_vec3 *this_vect)
+struct s_color *set_color_z(struct s_color *this_color, float z)
+{
+    this_color->e[2] = z;
+    return this_color;
+}
+
+struct s_color *create_color(struct s_color *this_vect)
 {
     struct s_color *this_color = (struct s_color *)malloc(sizeof(struct s_color));
+    if (this_color == NULL) {
+        // Handle memory allocation failure
+        return NULL;
+    }
+
     this_color->e[0] = this_vect->e[0];
     this_color->e[1] = this_vect->e[1];
     this_color->e[2] = this_vect->e[2];
 
     return this_color;
 }
+
+struct s_color *create_color_float(float x, float y, float z)
+{
+    struct s_color *this_color = (struct s_color *)malloc(sizeof(struct s_color));
+    if (this_color == NULL) {
+        // Handle memory allocation failure
+        return NULL;
+    }
+
+    this_color->e[0] = x;
+    this_color->e[1] = y;
+    this_color->e[2] = z;
+
+    return this_color;
+}
+
 
 
 //using the values of a colour struct, convert and return the values into a single integer value
@@ -76,6 +110,27 @@ struct s_point3 *get_ray_point_at_t(struct s_ray *current_ray, float t)
     result_point->e[2] = current_ray->ray_origin->e[2] + t*current_ray->ray_direction->e[2];
     return result_point;
 }
-/* ray end */
 
-#endif
+struct s_color *ray_color(struct s_ray * r)
+{
+    struct s_vec3 *unit_direction = find_unit_vector(r->ray_direction);
+    float a = 0.5 * (unit_direction->e[1] + 1.0);
+
+    struct s_color *one_color = (struct s_color *)malloc(sizeof(struct s_color));
+    one_color->e[0] = 1.0;
+    one_color->e[1] = 1.0;
+    one_color->e[2] = 1.0;
+
+    struct s_color *multi_color = (struct s_color *)malloc(sizeof(struct s_color));
+    multi_color->e[0] = 0.5;
+    multi_color->e[1] = 0.7;
+    multi_color->e[2] = 1.0;
+
+
+    struct s_color *result_color = (struct s_color *)malloc(sizeof(struct s_color));
+    result_color->e[0] = (1.0 - a) * one_color->e[0] + multi_color->e[0];
+    result_color->e[1] = (1.0 - a) * one_color->e[1] + multi_color->e[1];
+    result_color->e[2] = (1.0 - a) * one_color->e[2] + multi_color->e[2];
+    return result_color;
+}
+/* ray end */
