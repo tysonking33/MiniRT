@@ -63,6 +63,7 @@ float *cross_product(float *vectora, float *vectorb);
 float *find_ray_equation(float *vectora, float *direction_vector, float parameter_value);
 float *orthogonal_projection_single_vec(float *vectoru, float *vectorv, float *singular_subspace);
 float *convert_orthogonal_project_to_2d(float *vectoru, float *viewpoint_xyz);
+float *find_unit_vector(float *vector, float length);
 
 /* in light_types.c */
 float *find_reflection_vector(float *incident, float *normal);

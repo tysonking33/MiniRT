@@ -106,3 +106,13 @@ float distance_between_two_points_3d(float *vector_a, float *vector_b)
 {
     return sqrtf(pow(vector_a[0]-vector_b[0],2) + pow(vector_a[1]-vector_b[1],2) + pow(vector_a[2]-vector_b[2],2));
 }
+
+
+float *find_unit_vector(float *vector, float length)
+{
+    float *unit_vector = (float *)malloc(3 * sizeof(float));
+    unit_vector[0] = vector[0] / length;
+    unit_vector[1] = vector[1] / length;
+    unit_vector[2] = vector[2] / length;
+    return unit_vector;
+}

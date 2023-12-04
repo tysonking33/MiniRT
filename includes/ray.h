@@ -1,15 +1,19 @@
 #ifndef RAY_H
 #define RAY_H
 
-typedef struct s_ray_init {
-    float point_x;
-    float point_y;
-    float point_z;
+typedef struct s_point_init {
+    float *point_xyz_array;
 
-    float direction_x;
-    float direction_y;
-    float direction_z;
+}               t_point_init;
+
+typedef struct s_ray_init {
+    struct s_plane_init *point;
+
+    struct s_plane_init *direction;
+
 }               t_ray_init;
+
+
 
 
 void allocate_point_to_ray(t_ray_init *ray, float *point_array);
