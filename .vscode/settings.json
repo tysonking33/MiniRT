@@ -1,6 +1,9 @@
 {
     "files.associations": {
         "minirt.h": "c",
-        "parse.h": "c"
+        "parse.h": "c",
+        "__nullptr": "cpp",
+        "limits": "cpp",
+        "type_traits": "cpp"
     }
 }
