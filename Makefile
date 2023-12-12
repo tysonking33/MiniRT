@@ -6,7 +6,7 @@
 #    By: tytang <tytang@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/21 12:24:33 by tytang            #+#    #+#              #
-#    Updated: 2023/12/04 17:51:40 by tytang           ###   ########.fr        #
+#    Updated: 2023/12/12 14:22:47 by tytang           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,7 @@ FILES = events \
         parse_scene \
 		vec3_deviants \
 		vec3 \
+		sphere \
 
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(FILES)))
 OBJS = $(SRCS:.c=.o)

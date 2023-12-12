@@ -20,6 +20,8 @@ typedef struct s_data
     int bits_per_pixel;
     int line_length;
     int endian;
+    float height;
+    float width; 
 } t_data;
 
 typedef struct	s_vars {
@@ -29,11 +31,11 @@ typedef struct	s_vars {
 
 
 /* in main.c */
-void plot_pixel(void *mlx, void *mlx_win, t_data img, int x, int y,  int color);
-void my_mlx_pixel_put(t_data *data, int x, int y, int color);
-int	close_window(int keycode, t_vars *vars);
-int init_mlx_keyboard_hook(int keycode, t_vars *vars);
-int init_mlx_mouse_hook(int keycode, t_vars * vars);
+void plot_pixel(void *mlx, void *mlx_win, struct s_data *img, int x, int y,  int color);
+void my_mlx_pixel_put(struct s_data *data, int x, int y, int color);
+int init_mlx_keyboard_hook(int keycode, struct s_vars *vars);
+int init_mlx_keyboard_hook(int keycode, struct s_vars *vars);
+int init_mlx_mouse_hook(int keycode, struct s_vars * vars);
 int main(void);
 
 /* in events.c */
@@ -46,11 +48,8 @@ int mlx_hook_zoom(int keycode, t_vars *vars);
 /* in utils.c */
 int integer_abs(int a);
 
-/* in draw_circle.c */
-void midpoint_circle_algorithm_empty(int x1, int y1, int radius, void *mlx, void *mlx_win, t_data img);
-void midpoint_circle_algorithm1(int x_center, int y_center, int radius, void *mlx, void *mlx_win, t_data img);
-void midpoint_circle_algorithm(int x_center, int y_center, int radius, void *mlx, void *mlx_win, t_data img);
-void draw_shaded_circle(int x_center, int y_center, int radius, void *mlx, void *mlx_win, t_data img);
-
-
+/* in sphere.c */
+int hit_sphere(struct s_point3 *center, float radius, struct s_ray *r);
+struct s_color *get_ray_color(struct s_ray *r);
+void plot_sphere(void *mlx, void *mlx_win, struct s_data *img, struct s_point3 *center, float radius, struct s_ray *camera);
 #endif
