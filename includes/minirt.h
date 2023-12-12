@@ -3,11 +3,9 @@
 
 #include "../includes/minirt.h"
 #include "../includes/parse.h"
-#include "../includes/vec3.h"
-#include "../includes/vec3_deviants.h"
+#include "../includes/current_values.h"
 
 #include "../mlx/mlx.h"
-#include "parse.h"
 #include <stdio.h>
 #include <math.h>
 #include <unistd.h>
@@ -36,6 +34,7 @@ void my_mlx_pixel_put(struct s_data *data, int x, int y, int color);
 int init_mlx_keyboard_hook(int keycode, struct s_vars *vars);
 int init_mlx_keyboard_hook(int keycode, struct s_vars *vars);
 int init_mlx_mouse_hook(int keycode, struct s_vars * vars);
+void initializeScene(struct s_scene *scene);
 int main(void);
 
 /* in events.c */
@@ -44,12 +43,17 @@ int mlx_hook_camera_movements(int keycode, t_vars *vars);
 int mlx_hook_camera_rotation(int keycode, t_vars *vars);
 int mlx_hook_zoom(int keycode, t_vars *vars);
 
+/* in vector_calculations.c */
+struct s_vector3 *vector_add(struct s_vector3 *A, struct s_vector3 *B);
+struct s_vector3 *vector_subtract(struct s_vector3 *A, struct s_vector3 *B);
+struct s_vector3 *scalar_multiply(struct s_vector3 *A, float k);
+float dot_product(struct s_vector3 *A, struct s_vector3 *B);
+struct s_vector3 *cross_product(struct s_vector3 *A, struct s_vector3 *B);
+struct s_vector3 *normalize(struct s_vector3 *A);
+struct s_vector3 *vector_projection(struct s_vector3 *A, struct s_vector3 *B);
+float angle_between_vectors(struct s_vector3 *A, struct s_vector3 *B);
+float vector_magnitude(struct s_vector3 *A);
+float distance_between_points(struct s_vector3 *P, struct s_vector3 *Q);
+struct s_vector2 *rotate_2D_vector(struct s_vector2 *V, float theta);
 
-/* in utils.c */
-int integer_abs(int a);
-
-/* in sphere.c */
-int hit_sphere(struct s_point3 *center, float radius, struct s_ray *r);
-struct s_color *get_ray_color(struct s_ray *r);
-void plot_sphere(void *mlx, void *mlx_win, struct s_data *img, struct s_point3 *center, float radius, struct s_ray *camera);
 #endif

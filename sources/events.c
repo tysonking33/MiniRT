@@ -10,8 +10,11 @@ int	close_window(int keycode, t_vars *vars)
         printf("successful window close keycode: %d\n", keycode);
 
 	    mlx_destroy_window(vars->mlx, vars->win);
+        exit(0);
+
         return 0;
     }
+
 	return (-1);
 }
 
