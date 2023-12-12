@@ -35,6 +35,7 @@ int init_mlx_keyboard_hook(int keycode, struct s_vars *vars);
 int init_mlx_keyboard_hook(int keycode, struct s_vars *vars);
 int init_mlx_mouse_hook(int keycode, struct s_vars * vars);
 void initializeScene(struct s_scene *scene);
+struct s_ray * initializeCameraRay(struct s_camera *camera);
 int main(void);
 
 /* in events.c */
@@ -55,5 +56,12 @@ float angle_between_vectors(struct s_vector3 *A, struct s_vector3 *B);
 float vector_magnitude(struct s_vector3 *A);
 float distance_between_points(struct s_vector3 *P, struct s_vector3 *Q);
 struct s_vector2 *rotate_2D_vector(struct s_vector2 *V, float theta);
+struct s_vector3 *ray_at(struct s_ray *ray, float t);
 
+
+/* in sphere.c */
+float hit_sphere(struct s_vector3 *center, float radius, struct s_ray *r);
+struct s_vector3 *get_ray_color(struct s_ray *r);
+int  write_color(struct s_vector3 *color_vec);
+void draw_circle(void *mlx, void *win, struct s_data *img, int center_x, int center_y, int radius, struct s_ray *ray);
 #endif

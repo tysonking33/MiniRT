@@ -70,44 +70,65 @@ int init_mlx_mouse_hook(int keycode, struct s_vars * vars)
     return -1;
 }
 
-// Function to initialize the scene structure with default values
 void initializeScene(struct s_scene *scene) {
+    // Allocate memory for each structure
+    scene->camera = malloc(sizeof(t_camera));
+    scene->light = malloc(sizeof(t_light));
+    scene->sphere = malloc(sizeof(t_sphere));
+    scene->plane = malloc(sizeof(t_plane));
+    scene->cylinder = malloc(sizeof(t_cylinder));
+    scene->ambientLight = malloc(sizeof(t_ambient_light));
+
     // Initialize camera
-    scene->camera.identifier = "C";
-    scene->camera.position = (struct s_vector3){-50.0, 0, 20};
-    scene->camera.orientation = (struct s_vector3){0.0, 0.0, 1.0};
-    scene->camera.fov = 70.0;
+    scene->camera->identifier = "C";
+    scene->camera->position = &(t_vector3){-50.0, 0, 20};
+    scene->camera->orientation = &(t_vector3){0.0, 0.0, 1.0};
+    scene->camera->fov = 70.0;
 
     // Initialize light
-    scene->light.identifier = "L";
-    scene->light.position = (struct s_vector3){-40.0, 50.0, 0.0};
-    scene->light.brightness = 0.6;
-    scene->light.color = (struct s_color){10, 0, 255};
+    scene->light->identifier = "L";
+    scene->light->position = &(t_vector3){-40.0, 50.0, 0.0};
+    scene->light->brightness = 1.0;
+    scene->light->color = &(t_color){10, 0, 255};
 
     // Initialize sphere
-    scene->sphere.identifier = "sp";
-    scene->sphere.center = (struct s_vector3){0.0, 0.0, 20.6};
-    scene->sphere.diameter = 12.6;
-    scene->sphere.color = (struct s_color){10, 0, 255};
+    scene->sphere->identifier = "sp";
+    scene->sphere->center = &(t_vector3){0.0, 0.0, 20.6};
+    scene->sphere->diameter = 12.6;
+    scene->sphere->color = &(t_color){10, 0, 255};
 
     // Initialize plane
-    scene->plane.identifier = "pl";
-    scene->plane.point = (struct s_vector3){0.0, 0.0, -10.0};
-    scene->plane.normal = (struct s_vector3){0.0, 1.0, 0.0};
-    scene->plane.color = (struct s_color){0, 0, 225};
+    scene->plane->identifier = "pl";
+    scene->plane->point = &(t_vector3){0.0, 0.0, -10.0};
+    scene->plane->normal = &(t_vector3){0.0, 1.0, 0.0};
+    scene->plane->color = &(t_color){0, 0, 225};
 
     // Initialize cylinder
-    scene->cylinder.identifier = "cy";
-    scene->cylinder.center = (struct s_vector3){50.0, 0.0, 20.6};
-    scene->cylinder.axis = (struct s_vector3){0.0, 0.0, 1.0};
-    scene->cylinder.diameter = 14.2;
-    scene->cylinder.height = 21.42;
-    scene->cylinder.color = (struct s_color){10, 0, 255};
+    scene->cylinder->identifier = "cy";
+    scene->cylinder->center = &(t_vector3){50.0, 0.0, 20.6};
+    scene->cylinder->axis = &(t_vector3){0.0, 0.0, 1.0};
+    scene->cylinder->diameter = 14.2;
+    scene->cylinder->height = 21.42;
+    scene->cylinder->color = &(t_color){10, 0, 255};
 
     // Initialize ambient light
-    scene->ambientLight.identifier = "A";
-    scene->ambientLight.ratio = 0.2;
-    scene->ambientLight.color = (struct s_color){255, 255, 255};
+    scene->ambientLight->identifier = "A";
+    scene->ambientLight->ratio = 0.2;
+    scene->ambientLight->color = &(t_color){255, 255, 255};
+}
+
+
+
+struct s_ray * initializeCameraRay(struct s_camera *camera) {
+    struct s_ray *camera_ray = malloc(sizeof(t_ray));
+
+       // Allocate memory for direction and origin
+    camera_ray->direction = malloc(sizeof(t_vector3));
+    camera_ray->origin = malloc(sizeof(t_vector3));
+
+    camera_ray->origin = camera->position;        // Camera position is the origin of the ray
+    camera_ray->direction = camera->orientation; // Camera orientation is the direction of the ray
+    return camera_ray;
 }
 
 int main(void)
@@ -115,14 +136,14 @@ int main(void)
     struct s_vars *vars;
     vars = malloc(sizeof(struct s_vars));
     struct s_data *img = malloc(sizeof(struct s_data));
-    struct s_scene myScene;
+    struct s_scene *myScene = malloc(sizeof(struct s_scene));
 
     if (vars == NULL || img == NULL) {
         fprintf(stderr, "Failed to allocate memory\n");
         return 1;
     }
 
-    initializeScene(&myScene);
+    initializeScene(myScene);
 
     int window_height = 1920;
     int window_width = 1080;
@@ -151,8 +172,13 @@ int main(void)
     mlx_hook(vars->win, 3, 1L << 0, init_mlx_keyboard_hook, vars);
     mlx_mouse_hook(vars->win, init_mlx_mouse_hook, vars);
 
-    printf("Camera Position: %.2f, %.2f, %.2f\n", myScene.camera.position.x, myScene.camera.position.y, myScene.camera.position.z);
-    printf("Light Brightness: %.2f\n", myScene.light.brightness);
+    printf("Camera Position: %.2f, %.2f, %.2f\n", myScene->camera->position->x, myScene->camera->position->y, myScene->camera->position->z);
+    printf("Light Brightness: %.2f\n", myScene->light->brightness);
+
+    struct s_ray *camera_ray = initializeCameraRay(myScene->camera);
+
+    draw_circle(vars->mlx, vars->win, img, window_width / 2, window_height / 2, 50, camera_ray);
+
 
     mlx_loop(vars->mlx);
 
