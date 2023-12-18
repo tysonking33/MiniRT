@@ -189,6 +189,48 @@ void cleanup_scene(struct s_scene *scene)
     // Repeat this pattern for other structures in the scene
 }
 
+void cleanup_data(struct s_data *data)
+{
+    // Free memory associated with mlx_and_win
+    if (data->mlx_and_win != NULL)
+    {
+        // Free memory associated with mlx_and_win->mlx
+        if (data->mlx_and_win->mlx != NULL)
+        {
+            mlx_do_sync(data->mlx_and_win->mlx);  // Sync before destroying display
+            free(data->mlx_and_win->mlx);
+            data->mlx_and_win->mlx = NULL;
+        }
+
+        // Free memory associated with mlx_and_win->win
+        if (data->mlx_and_win->win != NULL)
+        {
+            free(data->mlx_and_win->win);
+            data->mlx_and_win->win = NULL;
+        }
+
+        // Free memory associated with mlx_and_win
+        free(data->mlx_and_win);
+        data->mlx_and_win = NULL;
+    }
+
+    // Free memory associated with img
+    if (data->img != NULL)
+    {
+        data->img = NULL;
+    }
+
+    // Additional cleanup for other members if needed
+
+    // Set other members to default values or free associated memory if needed
+    data->addr = NULL;
+    data->bits_per_pixel = 0;
+    data->line_length = 0;
+    data->endian = 0;
+    data->height = 0.0;
+    data->width = 0.0;
+}
+
 int main(void)
 {
     struct s_data *data = malloc(sizeof(struct s_data));
@@ -202,9 +244,6 @@ int main(void)
     }
     data->width = 1920;
     data->height = 1080;
-
-    data->width = 500;
-    data->height = 500;
 
 
     initializeScene(myScene);
@@ -235,26 +274,8 @@ int main(void)
 
     // Cleanup code...
     cleanup_scene(myScene);
+    cleanup_data(data);
 
-    /*void	*mlx;
-	void	*mlx_win;
-	t_data	img;
-
-	mlx = mlx_init();
-	mlx_win = mlx_new_window(mlx, 1920, 1080, "Hello world!");
-	img.img = mlx_new_image(mlx, 1920, 1080);
-	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,
-								&img.endian);
-	my_mlx_pixel_put(&img, 5, 5, 0x00FF0000);
-    for (int i = 50; i < 100; i++)
-    {
-        img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,
-                            &img.endian);
-        my_mlx_pixel_put(&img, 5, i, 0x00FF0000);
-        mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
-    }
-	mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
-	mlx_loop(mlx);*/
 
     return 0;
 }
