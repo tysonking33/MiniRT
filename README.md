@@ -126,9 +126,4 @@ Mouse code for MacOS:
     Scroll up: 4
     Scroll down : 5
 
-to make a shader given a point, calculate the distance from the center to the current point and the current point to the closest edge
-if distance_center_to_current_point > radius
-    true:
-        inside circle
-    else
-        outside circle - do not plot
+mlx is inserting each point of ppm, converted into a single colour int, at its accoridng x, y value, will figure out later
