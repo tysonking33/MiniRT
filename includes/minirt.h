@@ -13,6 +13,7 @@
 
 typedef struct s_data
 {
+    struct s_vars *mlx_and_win;
     void *img;
     char *addr;
     int bits_per_pixel;
@@ -36,6 +37,7 @@ int init_mlx_keyboard_hook(int keycode, struct s_vars *vars);
 int init_mlx_mouse_hook(int keycode, struct s_vars * vars);
 void initializeScene(struct s_scene *scene);
 struct s_ray * initializeCameraRay(struct s_camera *camera);
+void cleanup_scene(struct s_scene *scene);
 int main(void);
 
 /* in events.c */
@@ -63,5 +65,7 @@ struct s_vector3 *ray_at(struct s_ray *ray, float t);
 float hit_sphere(struct s_vector3 *center, float radius, struct s_ray *r);
 struct s_vector3 *get_ray_color(struct s_ray *r);
 int  write_color(struct s_vector3 *color_vec);
-void draw_circle(void *mlx, void *win, struct s_data *img, int center_x, int center_y, int radius, struct s_ray *ray);
+struct s_vector3 *ray_color(struct s_ray *r, struct s_scene *scene);
+void draw_scene(struct s_scene *scene, struct s_data *img, void *mlx, void *win);
+int begin_drawing(struct s_scene *myScene, struct s_data *data);
 #endif

@@ -1,11 +1,15 @@
 #include "../includes/minirt.h"
 
-//create the location of the pixel and actually put the image on the screen
-void plot_pixel(void *mlx, void *mlx_win, struct s_data *img, int x, int y,  int color)
+void plot_pixel(void *mlx, void *mlx_win, struct s_data *img, int x, int y, int color)
 {
+    printf("plot_pixel a\n");
     img->addr = mlx_get_data_addr(img->img, &img->bits_per_pixel, &img->line_length,
-                                 &img->endian);
+                                  &img->endian);
+    printf("plot_pixel b\n");
+
     my_mlx_pixel_put(img, x, y, color);
+    printf("plot_pixel c\n");
+
     mlx_put_image_to_window(mlx, mlx_win, img->img, 0, 0);
 }
 
@@ -25,15 +29,18 @@ int init_mlx_keyboard_hook(int keycode, struct s_vars *vars)
         printf("failed to close window\n");
         return -1;
     }
-    if ((keycode == 13 || keycode == 0 || keycode == 1 || keycode == 2) && mlx_hook_camera_movements(keycode, vars) == -1){
+    if ((keycode == 13 || keycode == 0 || keycode == 1 || keycode == 2) && mlx_hook_camera_movements(keycode, vars) == -1)
+    {
         printf("failed to move camera\n");
         return -1;
     }
-    if ((keycode >= 123 && keycode <= 126) && mlx_hook_camera_rotation(keycode, vars) == -1){
+    if ((keycode >= 123 && keycode <= 126) && mlx_hook_camera_rotation(keycode, vars) == -1)
+    {
         printf("failed to rotate camera\n");
         return -1;
     }
-    if ((keycode == 45 || keycode == 46) && mlx_hook_zoom(keycode, vars) == -1){
+    if ((keycode == 45 || keycode == 46) && mlx_hook_zoom(keycode, vars) == -1)
+    {
         printf("failed to zoom camera\n");
         return -1;
     }
@@ -42,7 +49,7 @@ int init_mlx_keyboard_hook(int keycode, struct s_vars *vars)
     return 0;
 }
 
-int init_mlx_mouse_hook(int keycode, struct s_vars * vars)
+int init_mlx_mouse_hook(int keycode, struct s_vars *vars)
 {
     (void)vars;
     printf("start mouse_hook, keycode: %d\n", keycode);
@@ -70,8 +77,9 @@ int init_mlx_mouse_hook(int keycode, struct s_vars * vars)
     return -1;
 }
 
-void initializeScene(struct s_scene *scene) {
-    // Allocate memory for each structure
+void initializeScene(struct s_scene *scene)
+{
+    // Allocate memory for each structure before assigning values
     scene->camera = malloc(sizeof(t_camera));
     scene->light = malloc(sizeof(t_light));
     scene->sphere = malloc(sizeof(t_sphere));
@@ -117,77 +125,62 @@ void initializeScene(struct s_scene *scene) {
     scene->ambientLight->color = &(t_color){255, 255, 255};
 }
 
-
-
-struct s_ray * initializeCameraRay(struct s_camera *camera) {
+struct s_ray *initializeCameraRay(struct s_camera *camera) {
     struct s_ray *camera_ray = malloc(sizeof(t_ray));
 
-       // Allocate memory for direction and origin
+    // Allocate memory for direction and origin
     camera_ray->direction = malloc(sizeof(t_vector3));
     camera_ray->origin = malloc(sizeof(t_vector3));
 
-    camera_ray->origin = camera->position;        // Camera position is the origin of the ray
-    camera_ray->direction = camera->orientation; // Camera orientation is the direction of the ray
+    // Copy values from camera to ray
+    camera_ray->origin->x = camera->position->x;
+    camera_ray->origin->y = camera->position->y;
+    camera_ray->origin->z = camera->position->z;
+
+    camera_ray->direction->x = camera->orientation->x;
+    camera_ray->direction->y = camera->orientation->y;
+    camera_ray->direction->z = camera->orientation->z;
+
     return camera_ray;
 }
 
-int main(void)
-{
-    struct s_vars *vars;
-    vars = malloc(sizeof(struct s_vars));
-    struct s_data *img = malloc(sizeof(struct s_data));
+void cleanup_scene(struct s_scene *scene) {
+    free(scene->camera->position);
+    free(scene->camera->orientation);
+    free(scene->camera);
+
+    free(scene->light->position);
+    free(scene->light->color);
+    free(scene->light);
+
+    // Repeat this pattern for other structures in the scene
+}
+
+int main(void) {
+    struct s_data *data = malloc(sizeof(struct s_data));
+    data->mlx_and_win = malloc(sizeof(struct s_vars));
     struct s_scene *myScene = malloc(sizeof(struct s_scene));
 
-    if (vars == NULL || img == NULL) {
+    if (data == NULL || data->mlx_and_win == NULL || myScene == NULL) {
         fprintf(stderr, "Failed to allocate memory\n");
         return 1;
     }
 
     initializeScene(myScene);
 
-    int window_height = 1920;
-    int window_width = 1080;
+    data->mlx_and_win->mlx = mlx_init();
+    // You need to set the window size appropriately
+    data->mlx_and_win->win = mlx_new_window(data->mlx_and_win->mlx, 1920, 1080, "My Window");
 
-    vars->mlx = mlx_init();
-    if (vars->mlx == NULL) {
-        fprintf(stderr, "Failed to initialize MinilibX\n");
-        free(vars);
-        free(img);
-        return 1;
-    }
+    mlx_hook(data->mlx_and_win->win, 3, 1L << 0, init_mlx_keyboard_hook, data->mlx_and_win);
+    mlx_mouse_hook(data->mlx_and_win->win, init_mlx_mouse_hook, data->mlx_and_win);
 
-    vars->win = mlx_new_window(vars->mlx, window_height, window_width, "Hello world!");
-    if (vars->win == NULL) {
-        fprintf(stderr, "Failed to create window\n");
-        mlx_destroy_image(vars->mlx, img->img);
-        free(vars);
-        free(img);
-        return 1;
-    }
+    begin_drawing(myScene, data);
 
-    img->img = mlx_new_image(vars->mlx, window_height, window_width);
-    img->height = window_height;
-    img->width = window_width;
+    mlx_loop(data->mlx_and_win->mlx);
 
-    mlx_hook(vars->win, 3, 1L << 0, init_mlx_keyboard_hook, vars);
-    mlx_mouse_hook(vars->win, init_mlx_mouse_hook, vars);
-
-    printf("Camera Position: %.2f, %.2f, %.2f\n", myScene->camera->position->x, myScene->camera->position->y, myScene->camera->position->z);
-    printf("Light Brightness: %.2f\n", myScene->light->brightness);
-
-    struct s_ray *camera_ray = initializeCameraRay(myScene->camera);
-
-    draw_circle(vars->mlx, vars->win, img, window_width / 2, window_height / 2, 50, camera_ray);
-
-
-    mlx_loop(vars->mlx);
-
-    // Cleanup
-    mlx_destroy_window(vars->mlx, vars->win);
-    mlx_destroy_image(vars->mlx, img->img);
-    free(vars);
-    free(img);
+    // Cleanup code...
+    cleanup_scene(myScene);
 
     return 0;
 }
-
