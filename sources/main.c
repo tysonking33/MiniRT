@@ -1,16 +1,47 @@
 #include "../includes/minirt.h"
 
+// Function to plot a pixel
 void plot_pixel(void *mlx, void *mlx_win, struct s_data *img, int x, int y, int color)
 {
-    printf("plot_pixel a\n");
-    img->addr = mlx_get_data_addr(img->img, &img->bits_per_pixel, &img->line_length,
-                                  &img->endian);
-    printf("plot_pixel b\n");
+
+    // Ensure img->img is a valid image structure created with mlx_new_image
+    if (img->img == NULL)
+    {
+        //printf("Error: Invalid image structure.\n");
+        return;
+    }
+    else
+    {
+        //printf("seg a\n");
+    }
+
+    
+    // Get image data address
+    img->addr = mlx_get_data_addr(img->img, &img->bits_per_pixel, &img->line_length, &img->endian);
+    if (img->addr == NULL)
+    {
+        //printf(stderr, "Error: Failed to get image data address.\n");
+        return;
+    }
+    img->addr = mlx_get_data_addr(img->img, &img->bits_per_pixel, &img->line_length, &img->endian);
+
+    // Ensure img->addr is a valid pointer
+    if (img->addr == NULL)
+    {
+        //printf("Error: Failed to get image data address.\n");
+        return;
+    }
+    else
+    {
+        //printf("seg b\n");
+    }
 
     my_mlx_pixel_put(img, x, y, color);
-    printf("plot_pixel c\n");
+    //printf("seg c\n");
 
+    // Put the image to the window
     mlx_put_image_to_window(mlx, mlx_win, img->img, 0, 0);
+    //printf("seg d\n");
 }
 
 void my_mlx_pixel_put(struct s_data *data, int x, int y, int color)
@@ -23,28 +54,28 @@ void my_mlx_pixel_put(struct s_data *data, int x, int y, int color)
 
 int init_mlx_keyboard_hook(int keycode, struct s_vars *vars)
 {
-    printf("start init_mlx_keyboard_hook, keycode: %d\n", keycode);
+    //printf("start init_mlx_keyboard_hook, keycode: %d\n", keycode);
     if (keycode == 53 && close_window(keycode, vars) == -1)
     {
-        printf("failed to close window\n");
+        //printf("failed to close window\n");
         return -1;
     }
     if ((keycode == 13 || keycode == 0 || keycode == 1 || keycode == 2) && mlx_hook_camera_movements(keycode, vars) == -1)
     {
-        printf("failed to move camera\n");
+        //printf("failed to move camera\n");
         return -1;
     }
     if ((keycode >= 123 && keycode <= 126) && mlx_hook_camera_rotation(keycode, vars) == -1)
     {
-        printf("failed to rotate camera\n");
+        //printf("failed to rotate camera\n");
         return -1;
     }
     if ((keycode == 45 || keycode == 46) && mlx_hook_zoom(keycode, vars) == -1)
     {
-        printf("failed to zoom camera\n");
+        //printf("failed to zoom camera\n");
         return -1;
     }
-    printf("end init_mlx_keyboard_hook\n");
+    //printf("end init_mlx_keyboard_hook\n");
 
     return 0;
 }
@@ -52,26 +83,26 @@ int init_mlx_keyboard_hook(int keycode, struct s_vars *vars)
 int init_mlx_mouse_hook(int keycode, struct s_vars *vars)
 {
     (void)vars;
-    printf("start mouse_hook, keycode: %d\n", keycode);
+    //printf("start mouse_hook, keycode: %d\n", keycode);
     if (keycode == 1)
     {
-        printf("left click\n");
+        //printf("left click\n");
     }
     else if (keycode == 2)
     {
-        printf("right click\n");
+        //printf("right click\n");
     }
     else if (keycode == 3)
     {
-        printf("Middle click\n");
+        //printf("Middle click\n");
     }
     else if (keycode == 4)
     {
-        printf("Scroll up\n");
+        //printf("Scroll up\n");
     }
     else if (keycode == 5)
     {
-        printf("Scroll down\n");
+        //printf("Scroll down\n");
     }
 
     return -1;
@@ -125,7 +156,8 @@ void initializeScene(struct s_scene *scene)
     scene->ambientLight->color = &(t_color){255, 255, 255};
 }
 
-struct s_ray *initializeCameraRay(struct s_camera *camera) {
+struct s_ray *initializeCameraRay(struct s_camera *camera)
+{
     struct s_ray *camera_ray = malloc(sizeof(t_ray));
 
     // Allocate memory for direction and origin
@@ -144,7 +176,8 @@ struct s_ray *initializeCameraRay(struct s_camera *camera) {
     return camera_ray;
 }
 
-void cleanup_scene(struct s_scene *scene) {
+void cleanup_scene(struct s_scene *scene)
+{
     free(scene->camera->position);
     free(scene->camera->orientation);
     free(scene->camera);
@@ -156,31 +189,72 @@ void cleanup_scene(struct s_scene *scene) {
     // Repeat this pattern for other structures in the scene
 }
 
-int main(void) {
+int main(void)
+{
     struct s_data *data = malloc(sizeof(struct s_data));
     data->mlx_and_win = malloc(sizeof(struct s_vars));
     struct s_scene *myScene = malloc(sizeof(struct s_scene));
 
-    if (data == NULL || data->mlx_and_win == NULL || myScene == NULL) {
-        fprintf(stderr, "Failed to allocate memory\n");
+    if (data == NULL || data->mlx_and_win == NULL || myScene == NULL)
+    {
+        //printf(stderr, "Failed to allocate memory\n");
         return 1;
     }
+    data->width = 1920;
+    data->height = 1080;
+
+    data->width = 500;
+    data->height = 500;
+
 
     initializeScene(myScene);
 
     data->mlx_and_win->mlx = mlx_init();
-    // You need to set the window size appropriately
-    data->mlx_and_win->win = mlx_new_window(data->mlx_and_win->mlx, 1920, 1080, "My Window");
 
+    // Ensure that the window size is set appropriately
+    data->mlx_and_win->win = mlx_new_window(data->mlx_and_win->mlx, data->width, data->height, "My Window");
+
+    // Check if the window creation is successful
+    if (data->mlx_and_win->win == NULL)
+    {
+        //printf(stderr, "Error: Failed to create window.\n");
+        return 1;
+    }
+
+    // Set up hooks
     mlx_hook(data->mlx_and_win->win, 3, 1L << 0, init_mlx_keyboard_hook, data->mlx_and_win);
     mlx_mouse_hook(data->mlx_and_win->win, init_mlx_mouse_hook, data->mlx_and_win);
 
+    // Begin drawing
+    data->img = mlx_new_image(data->mlx_and_win->mlx, data->width, data->height);
+
     begin_drawing(myScene, data);
 
+    // Start the event loop
     mlx_loop(data->mlx_and_win->mlx);
 
     // Cleanup code...
     cleanup_scene(myScene);
+
+    /*void	*mlx;
+	void	*mlx_win;
+	t_data	img;
+
+	mlx = mlx_init();
+	mlx_win = mlx_new_window(mlx, 1920, 1080, "Hello world!");
+	img.img = mlx_new_image(mlx, 1920, 1080);
+	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,
+								&img.endian);
+	my_mlx_pixel_put(&img, 5, 5, 0x00FF0000);
+    for (int i = 50; i < 100; i++)
+    {
+        img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,
+                            &img.endian);
+        my_mlx_pixel_put(&img, 5, i, 0x00FF0000);
+        mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
+    }
+	mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
+	mlx_loop(mlx);*/
 
     return 0;
 }
