@@ -34,6 +34,7 @@ struct s_vector3 *vector_subtract(struct s_vector3 *A, struct s_vector3 *B)
     return result;
 }
 
+
 // Function to perform scalar multiplication on a vector
 struct s_vector3 *scalar_multiply(struct s_vector3 *A, float k)
 {

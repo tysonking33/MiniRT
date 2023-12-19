@@ -99,70 +99,113 @@ int init_mlx_mouse_hook(int keycode, struct s_vars *vars)
 void initializeScene(struct s_scene *scene)
 {
     // Allocate memory for each structure before assigning values
-    scene->camera = malloc(sizeof(t_camera));
-    scene->light = malloc(sizeof(t_light));
-    scene->sphere = malloc(sizeof(t_sphere));
-    scene->plane = malloc(sizeof(t_plane));
-    scene->cylinder = malloc(sizeof(t_cylinder));
-    scene->ambientLight = malloc(sizeof(t_ambient_light));
+    scene->camera = malloc(sizeof(struct s_camera));
+    scene->light = malloc(sizeof(struct s_light));
+    scene->sphere = malloc(sizeof(struct s_sphere));
+    scene->plane = malloc(sizeof(struct s_plane));
+    scene->cylinder = malloc(sizeof(struct s_cylinder));
+    scene->ambientLight = malloc(sizeof(struct s_ambient_light));
 
     // Initialize camera
     scene->camera->identifier = "C";
-    scene->camera->position = &(t_vector3){-50.0, 0, 20};
-    scene->camera->orientation = &(t_vector3){0.0, 0.0, 1.0};
+    scene->camera->position = malloc(sizeof(struct s_vector3));
+    scene->camera->position->x = -50.0;
+    scene->camera->position->y = 0.0;
+    scene->camera->position->z = 20.0;
+    scene->camera->orientation = malloc(sizeof(struct s_vector3));
+    scene->camera->orientation->x = 0.0;
+    scene->camera->orientation->y = 0.0;
+    scene->camera->orientation->z = 1.0;
     scene->camera->fov = 70.0;
 
     // Initialize light
     scene->light->identifier = "L";
-    scene->light->position = &(t_vector3){-40.0, 50.0, 0.0};
-    scene->light->brightness = 1.0;
-    scene->light->color = &(t_color){10, 0, 255};
+    scene->light->position = malloc(sizeof(struct s_vector3));
+    scene->light->position->x = -40.0;
+    scene->light->position->y = 0.0;
+    scene->light->position->z = 30.0;
+    scene->light->brightness = 0.7;
+    scene->light->color = malloc(sizeof(struct s_color));
+    scene->light->color->r = 255;
+    scene->light->color->g = 255;
+    scene->light->color->b = 255;
 
     // Initialize sphere
     scene->sphere->identifier = "sp";
-    scene->sphere->center = &(t_vector3){0.0, 0.0, 20.6};
-    scene->sphere->diameter = 12.6;
-    scene->sphere->color = &(t_color){10, 0, 255};
+    scene->sphere->center = malloc(sizeof(struct s_vector3));
+    scene->sphere->center->x = 0.0;
+    scene->sphere->center->y = 0.0;
+    scene->sphere->center->z = 20.0;
+    scene->sphere->diameter = 20.0;
+    scene->sphere->color = malloc(sizeof(struct s_color));
+    scene->sphere->color->r = 255;
+    scene->sphere->color->g = 0;
+    scene->sphere->color->b = 0;
 
     // Initialize plane
     scene->plane->identifier = "pl";
-    scene->plane->point = &(t_vector3){0.0, 0.0, -10.0};
-    scene->plane->normal = &(t_vector3){0.0, 1.0, 0.0};
-    scene->plane->color = &(t_color){0, 0, 225};
+    scene->plane->point = malloc(sizeof(struct s_vector3));
+    scene->plane->point->x = 0.0;
+    scene->plane->point->y = 0.0;
+    scene->plane->point->z = 0.0;
+    scene->plane->normal = malloc(sizeof(struct s_vector3));
+    scene->plane->normal->x = 0.0;
+    scene->plane->normal->y = 1.0;
+    scene->plane->normal->z = 0.0;
+    scene->plane->color = malloc(sizeof(struct s_color));
+    scene->plane->color->r = 255;
+    scene->plane->color->g = 0;
+    scene->plane->color->b = 225;
 
     // Initialize cylinder
     scene->cylinder->identifier = "cy";
-    scene->cylinder->center = &(t_vector3){50.0, 0.0, 20.6};
-    scene->cylinder->axis = &(t_vector3){0.0, 0.0, 1.0};
+    scene->cylinder->center = malloc(sizeof(struct s_vector3));
+    scene->cylinder->center->x = 50.0;
+    scene->cylinder->center->y = 0.0;
+    scene->cylinder->center->z = 20.6;
+    scene->cylinder->axis = malloc(sizeof(struct s_vector3));
+    scene->cylinder->axis->x = 0.0;
+    scene->cylinder->axis->y = 0.0;
+    scene->cylinder->axis->z = 1.0;
     scene->cylinder->diameter = 14.2;
     scene->cylinder->height = 21.42;
-    scene->cylinder->color = &(t_color){10, 0, 255};
+    scene->cylinder->color = malloc(sizeof(struct s_color));
+    scene->cylinder->color->r = 10;
+    scene->cylinder->color->g = 0;
+    scene->cylinder->color->b = 255;
 
     // Initialize ambient light
     scene->ambientLight->identifier = "A";
     scene->ambientLight->ratio = 0.2;
-    scene->ambientLight->color = &(t_color){255, 255, 255};
+    scene->ambientLight->color = malloc(sizeof(struct s_color));
+    scene->ambientLight->color->r = 255;
+    scene->ambientLight->color->g = 255;
+    scene->ambientLight->color->b = 255;
 }
+
+
 
 struct s_ray *initializeCameraRay(struct s_camera *camera)
 {
     struct s_ray *camera_ray = malloc(sizeof(t_ray));
 
     // Allocate memory for direction and origin
-    camera_ray->direction = malloc(sizeof(t_vector3));
-    camera_ray->origin = malloc(sizeof(t_vector3));
+    camera_ray->direction = malloc(sizeof(struct s_vector3));
+    camera_ray->origin = malloc(sizeof(struct s_vector3));
 
     // Copy values from camera to ray
     camera_ray->origin->x = camera->position->x;
     camera_ray->origin->y = camera->position->y;
     camera_ray->origin->z = camera->position->z;
 
-    camera_ray->direction->x = camera->orientation->x;
-    camera_ray->direction->y = camera->orientation->y;
-    camera_ray->direction->z = camera->orientation->z;
+    // Calculate direction based on the difference between the orientation and position
+    camera_ray->direction->x = camera->orientation->x - camera->position->x;
+    camera_ray->direction->y = camera->orientation->y - camera->position->y;
+    camera_ray->direction->z = camera->orientation->z - camera->position->z;
 
     return camera_ray;
 }
+
 
 void cleanup_scene(struct s_scene *scene)
 {
@@ -237,7 +280,6 @@ int main(void)
     data->width = 500;
     data->height = 500;
 
-
     initializeScene(myScene);
 
     data->mlx_and_win->mlx = mlx_init();
@@ -261,8 +303,8 @@ int main(void)
 
     //begin_drawing(myScene, data);
 
-    draw_blue_to_white(myScene, data, data->mlx_and_win->mlx, data->mlx_and_win->win);
-
+    //draw_blue_to_white(myScene, data, data->mlx_and_win->mlx, data->mlx_and_win->win);
+    draw_sphere(myScene, data, data->mlx_and_win->mlx, data->mlx_and_win->win);
 
     // Start the event loop
     mlx_loop(data->mlx_and_win->mlx);

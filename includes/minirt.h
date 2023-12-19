@@ -74,4 +74,21 @@ int begin_drawing(struct s_scene *myScene, struct s_data *data);
 struct s_vector3 *ray_color_btw(struct s_ray *r);
 void draw_blue_to_white(struct s_scene *scene, struct s_data *img, void *mlx, void *win);
 
+/* in sphere2.c */
+int hit_sphere2(struct s_vector3 *center, float radius, struct s_ray *r);
+struct s_vector3 * ray_color_sphere(struct s_ray * r);
+void draw_sphere(struct s_scene *scene, struct s_data *img, void *mlx, void *win);
+
+/* in debug_and_print.c */
+void print_vector3(const char *label, struct s_vector3 *v);
+void print_color(const char *label, struct s_color *c);
+void print_camera(struct s_camera *camera);
+void print_light(struct s_light *light);
+void print_sphere(struct s_sphere *sphere);
+void print_plane(struct s_plane *plane);
+void print_cylinder(struct s_cylinder *cylinder);
+void print_ambient_light(struct s_ambient_light *ambientLight);
+void print_scene(struct s_scene *scene);
+void test_init_vector();
+
 #endif
