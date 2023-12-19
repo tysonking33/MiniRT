@@ -23,18 +23,6 @@ void plot_pixel(void *mlx, void *mlx_win, struct s_data *img, int x, int y, int 
         //printf(stderr, "Error: Failed to get image data address.\n");
         return;
     }
-    img->addr = mlx_get_data_addr(img->img, &img->bits_per_pixel, &img->line_length, &img->endian);
-
-    // Ensure img->addr is a valid pointer
-    if (img->addr == NULL)
-    {
-        //printf("Error: Failed to get image data address.\n");
-        return;
-    }
-    else
-    {
-        //printf("seg b\n");
-    }
 
     my_mlx_pixel_put(img, x, y, color);
     //printf("seg c\n");
@@ -246,6 +234,10 @@ int main(void)
     data->height = 1080;
 
 
+    data->width = 500;
+    data->height = 500;
+
+
     initializeScene(myScene);
 
     data->mlx_and_win->mlx = mlx_init();
@@ -267,7 +259,10 @@ int main(void)
     // Begin drawing
     data->img = mlx_new_image(data->mlx_and_win->mlx, data->width, data->height);
 
-    begin_drawing(myScene, data);
+    //begin_drawing(myScene, data);
+
+    draw_blue_to_white(myScene, data, data->mlx_and_win->mlx, data->mlx_and_win->win);
+
 
     // Start the event loop
     mlx_loop(data->mlx_and_win->mlx);

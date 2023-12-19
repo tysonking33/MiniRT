@@ -69,4 +69,9 @@ int  write_color(struct s_vector3 *color_vec);
 struct s_vector3 *ray_color(struct s_ray *r);
 void draw_scene(struct s_scene *scene, struct s_data *img, void *mlx, void *win);
 int begin_drawing(struct s_scene *myScene, struct s_data *data);
+
+/* in blue_to_white.c */
+struct s_vector3 *ray_color_btw(struct s_ray *r);
+void draw_blue_to_white(struct s_scene *scene, struct s_data *img, void *mlx, void *win);
+
 #endif

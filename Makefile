@@ -6,7 +6,7 @@
 #    By: tytang <tytang@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/21 12:24:33 by tytang            #+#    #+#              #
-#    Updated: 2023/12/12 18:13:28 by tytang           ###   ########.fr        #
+#    Updated: 2023/12/19 14:50:52 by tytang           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,30 +14,31 @@ NAME = minirt
 CC = gcc
 FLAGS = -Wall -Wextra -Werror -g
 RM = rm -f
-LINKS = -I./includes -L./libft -lft -L./mlx -lmlx -framework OpenGL \
-	   	-framework Appkit
+LINKS = -I./includes -L./libft -lft -L./mlx -lmlx -framework OpenGL -framework Appkit
 
 SRCS_DIR = sources/
-
 FILES = events \
         main \
         parse_scene \
 		vector_calculations \
 		sphere \
-
+		blue_to_white \
+		sphere2 \
+		
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(FILES)))
 OBJS = $(SRCS:.c=.o)
 
-all: $(NAME)
-	clear
+all: mlx_library $(NAME)
 	./minirt
 
-$(NAME) : $(OBJS)
+$(NAME): $(OBJS)
 	@$(MAKE) re -C ./libft
-	@$(MAKE) -C ./mlx
 	$(CC) $(FLAGS) $(OBJS) -o $(NAME) $(LINKS)
 
-$(OBJS): %.o : %.c
+mlx_library:
+	@$(MAKE) -C ./mlx
+
+$(OBJS): %.o: %.c
 	gcc $(FLAGS) -c -o $@ $<
 
 clean:
@@ -45,10 +46,10 @@ clean:
 	@$(MAKE) -C ./libft clean
 	@$(MAKE) -C ./mlx clean
 
-fclean:	clean
+fclean: clean
 	rm -f $(NAME)
 	@$(MAKE) -C ./libft fclean
 
 re: fclean all
 
-.PHONY: re fclean clean
+.PHONY: all clean fclean re mlx_library
