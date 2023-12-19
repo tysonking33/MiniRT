@@ -7,6 +7,7 @@
         "type_traits": "cpp",
         "vec3.h": "c",
         "mlx.h": "c",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "vec.h": "c"
     }
 }

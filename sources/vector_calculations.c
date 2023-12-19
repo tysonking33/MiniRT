@@ -26,9 +26,9 @@ struct s_vector3 *vector_subtract(struct s_vector3 *A, struct s_vector3 *B)
     if (result != NULL)
     {
         // Perform the vector subtraction
-        result->x = A->x - B->x;
-        result->y = A->y - B->y;
-        result->z = A->z - B->z;
+        result->x = (A->x - B->x);
+        result->y = (A->y - B->y);
+        result->z = (A->z - B->z);
     }
 
     return result;
@@ -55,7 +55,7 @@ struct s_vector3 *scalar_multiply(struct s_vector3 *A, float k)
 // Function to calculate the dot product of two vectors
 float dot_product(struct s_vector3 *A, struct s_vector3 *B)
 {
-    return A->x * B->x + A->y * B->y + A->z * B->z;
+    return (A->x * B->x) + (A->y * B->y) + (A->z * B->z);
 }
 
 // Function to calculate the cross product of two vectors

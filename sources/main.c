@@ -109,7 +109,7 @@ void initializeScene(struct s_scene *scene)
     // Initialize camera
     scene->camera->identifier = "C";
     scene->camera->position = malloc(sizeof(struct s_vector3));
-    scene->camera->position->x = -50.0;
+    scene->camera->position->x = 50.0;
     scene->camera->position->y = 0.0;
     scene->camera->position->z = 20.0;
     scene->camera->orientation = malloc(sizeof(struct s_vector3));
@@ -187,7 +187,7 @@ void initializeScene(struct s_scene *scene)
 
 struct s_ray *initializeCameraRay(struct s_camera *camera)
 {
-    struct s_ray *camera_ray = malloc(sizeof(t_ray));
+    struct s_ray *camera_ray = malloc(sizeof(struct s_ray));
 
     // Allocate memory for direction and origin
     camera_ray->direction = malloc(sizeof(struct s_vector3));
@@ -203,8 +203,12 @@ struct s_ray *initializeCameraRay(struct s_camera *camera)
     camera_ray->direction->y = camera->orientation->y - camera->position->y;
     camera_ray->direction->z = camera->orientation->z - camera->position->z;
 
+    // Normalize the direction vector
+    camera_ray->direction = normalize(camera_ray->direction);
+
     return camera_ray;
 }
+
 
 
 void cleanup_scene(struct s_scene *scene)
@@ -217,7 +221,22 @@ void cleanup_scene(struct s_scene *scene)
     free(scene->light->color);
     free(scene->light);
 
-    // Repeat this pattern for other structures in the scene
+    free(scene->sphere->center);
+    free(scene->sphere->color);
+    free(scene->sphere);
+
+    free(scene->plane->point);
+    free(scene->plane->normal);
+    free(scene->plane->color);
+    free(scene->plane);
+
+    free(scene->cylinder->center);
+    free(scene->cylinder->axis);
+    free(scene->cylinder->color);
+    free(scene->cylinder);
+
+    free(scene->ambientLight->color);
+    free(scene->ambientLight);
 }
 
 void cleanup_data(struct s_data *data)
@@ -228,7 +247,7 @@ void cleanup_data(struct s_data *data)
         // Free memory associated with mlx_and_win->mlx
         if (data->mlx_and_win->mlx != NULL)
         {
-            mlx_do_sync(data->mlx_and_win->mlx);  // Sync before destroying display
+            mlx_do_sync(data->mlx_and_win->mlx); // Sync before destroying display
             free(data->mlx_and_win->mlx);
             data->mlx_and_win->mlx = NULL;
         }
@@ -248,6 +267,7 @@ void cleanup_data(struct s_data *data)
     // Free memory associated with img
     if (data->img != NULL)
     {
+        mlx_destroy_image(data->mlx_and_win->mlx, data->img);
         data->img = NULL;
     }
 
@@ -261,6 +281,7 @@ void cleanup_data(struct s_data *data)
     data->height = 0.0;
     data->width = 0.0;
 }
+
 
 int main(void)
 {
@@ -277,8 +298,8 @@ int main(void)
     data->height = 1080;
 
 
-    data->width = 500;
-    data->height = 500;
+    data->width = 200;
+    data->height = 200;
 
     initializeScene(myScene);
 
