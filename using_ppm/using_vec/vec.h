@@ -3,13 +3,16 @@
 
 
 #define WIDTH 800
-#define HEIGHT 600
+#define HEIGHT 800
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 
-// Struct definition
+
+
+
+// start Struct definition for s_vec3 in vec_utils.c
 typedef struct s_vec3 {
     float x, y, z;
 } t_vec3;
@@ -50,8 +53,36 @@ struct s_vec3 *vec3_unit_vector(struct s_vec3 *v);
 void free_vec3(struct s_vec3 *v);
 
 
+
+
+
+// end struct s_vec3 and related functions
+
+//start Struct definition for s_ray in ray_util.c
+
+typedef struct s_ray{
+    struct s_vec3 *origin;
+    struct s_vec3 *direction;
+}   t_ray;
+
+struct s_ray *make_s_ray(struct s_vec3 *origin, struct s_vec3 *direction);
+
+struct s_vec3 *get_origin(struct s_ray *ray);
+struct s_vec3 *get_direction(struct s_ray *ray);
+struct s_vec3 *at(struct s_ray *ray, float t);
+void free_s_ray(struct s_ray *r);
+// end struct s_ray and related functions
+
+
+
 /*in using_vect.c */
 void write_color(FILE *file, struct s_vec3 * color);
+void draw_gradient();
 int main();
+
+/* in draw_circle.c */
+int hit_sphere(struct s_vec3 *center, float radius, struct s_ray *r);
+struct s_vec3 *ray_color(struct s_ray *r);
+void draw_circle();
 
 #endif // VEC_H

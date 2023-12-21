@@ -8,7 +8,8 @@ void write_color(FILE *file, struct s_vec3 *color) {
     free_vec3(color);  // Free the memory allocated for color
 }
 
-int main() {
+void draw_gradient()
+{
     int image_width = 256;
     int image_height = 256;
     FILE *image = fopen("output.ppm", "w");
@@ -29,5 +30,11 @@ int main() {
     printf("\rDone.                 \n");
 
     fclose(image);
+}
+
+
+
+int main() {
+    draw_circle();
     return 0;
 }
