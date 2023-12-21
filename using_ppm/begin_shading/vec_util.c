@@ -82,6 +82,6 @@ struct s_vec3 * vec3_unit_vector(struct s_vec3 *v) {
 
 // Free memory for vec3
 void free_vec3(struct s_vec3 * v) {
-    (void)v;
+    //(void)v;
     free(v);
 }
