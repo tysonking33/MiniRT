@@ -81,7 +81,7 @@ typedef struct s_hit_record{
     struct s_vec3 *point_p;
     struct s_vec3 *normal;
     float t;
-
+    float front_face_bool;        //true if value is more than 0
 }   t_hit_record;
 
 
@@ -94,7 +94,7 @@ struct s_sphere *make_s_sphere(struct s_vec3 *center, float radius);
 struct s_vec3 *get_sphere_center(struct s_sphere *src_sphere);
 float get_sphere_radius(struct s_sphere *src_sphere);
 float sphere_hit(struct s_sphere *sphere, struct s_ray * r, float ray_tmin, float ray_tmax, struct s_hit_record * record);
-
+void set_face_normal(struct s_hit_record *hit_record, struct s_ray *r, struct s_vec3 *outward_normal);   //make the normal always point outwards fromt he surface
 /* end struct s_ray and related functions */
 
 

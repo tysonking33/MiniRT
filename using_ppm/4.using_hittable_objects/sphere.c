@@ -42,8 +42,26 @@ float sphere_hit(struct s_sphere *sphere, struct s_ray * r, float ray_tmin, floa
 
     record->t = root;
     record->point_p = at(r, record->t);
+    struct s_vec3 *outward_normal = vec3_div(vec3_sub(record->point_p, sphere->center), sphere->radius);
+    set_face_normal(record, r, outward_normal);
     record->normal =  vec3_div(vec3_sub(record->point_p, sphere->center), sphere->radius);
 
     return 1.0;
 
+}
+
+
+void set_face_normal(struct s_hit_record *hit_record, struct s_ray *r, struct s_vec3 *outward_normal)
+{
+    hit_record->front_face_bool = vec3_dot(r->direction, outward_normal);
+
+    if (hit_record->front_face_bool > 0.0)
+    {
+        hit_record->normal = outward_normal;
+    }
+    else
+    {
+        hit_record->normal = vec3_neg(outward_normal);
+    }
+    
 }
