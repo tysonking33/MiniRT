@@ -8,6 +8,7 @@
         "vec3.h": "c",
         "mlx.h": "c",
         "unistd.h": "c",
-        "vec.h": "c"
+        "vec.h": "c",
+        "vector": "cpp"
     }
 }

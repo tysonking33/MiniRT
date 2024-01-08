@@ -1,0 +1,7 @@
+#!/bin/bash
+
+clear
+
+gcc *.c -o main.exe
+
+./main.exe
