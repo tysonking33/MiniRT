@@ -1,0 +1,7 @@
+#!/bin/bash
+
+clear
+
+gcc struct_dec.c -o main.exe -lm
+
+./main.exe
