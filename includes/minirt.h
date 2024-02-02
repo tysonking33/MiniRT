@@ -1,71 +1,47 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minirt.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lbaela <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/01/18 18:42:37 by lbaela            #+#    #+#             */
+/*   Updated: 2022/03/02 09:23:01 by lbaela           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINIRT_H
-#define MINIRT_H
+# define MINIRT_H
 
-#include "../mlx/mlx.h"
-#include "../includes/minirt.h"
-#include "parse.h"
-#include <stdio.h>
-#include <math.h>
-#include <unistd.h>
-#include <stdlib.h>
+# define WIN_WIDTH	1200
+# define WIN_HEIGHT	800
 
-typedef struct s_data
-{
-    void *img;
-    char *addr;
-    int bits_per_pixel;
-    int line_length;
-    int endian;
-} t_data;
+# define MIN_DIST		0.0001
+# define MAX_DIST		100000000.0
 
-typedef struct	s_vars {
-	void	*mlx;
-	void	*win;
-}				t_vars;
+# define COL_RED		0x00D13632
+# define COL_ORANGE		0x00E2571E
+# define COL_YELLOW		0x00CDB924
+# define COL_GREEN		0x00479E1B
+# define COL_BLUE		0x001D829E
+# define COL_VIOLET		0x00503FA9
+# define COL_BLACK		0x002B2B2A
+
+# include <stdio.h>
+# include "structure_prototypes.h"
 
 
-/* in main.c */
-void plot_pixel(void *mlx, void *mlx_win, t_data img, int x, int y,  int color);
-void my_mlx_pixel_put(t_data *data, int x, int y, int color);
-int	close_window(int keycode, t_vars *vars);
-int init_mlx_keyboard_hook(int keycode, t_vars *vars);
-int init_mlx_mouse_hook(int keycode, t_vars * vars);
-int main(void);
-
-/* in events.c */
-int	close_window(int keycode, t_vars *vars);
-int mlx_hook_camera_movements(int keycode, t_vars *vars);
-int mlx_hook_camera_rotation(int keycode, t_vars *vars);
-int mlx_hook_zoom(int keycode, t_vars *vars);
-
-/* in draw_line.c */
-void plotLineLow(int x0, int y0, int x1, int y1, void *mlx, void *mlx_win, t_data img);
-void plotLineLow(int x0, int y0, int x1, int y1, void *mlx, void *mlx_win, t_data img);
-void Bresenham_line_algorithm(int x0, int y0, int x1, int y1, void *mlx, void *mlx_win, t_data img);
-
-/* in utils.c */
-int integer_abs(int a);
-
-/* in draw_circle.c */
-void midpoint_circle_algorithm_empty(int x1, int y1, int radius, void *mlx, void *mlx_win, t_data img);
-void midpoint_circle_algorithm1(int x_center, int y_center, int radius, void *mlx, void *mlx_win, t_data img);
-void midpoint_circle_algorithm(int x_center, int y_center, int radius, void *mlx, void *mlx_win, t_data img);
-void draw_shaded_circle(int x_center, int y_center, int radius, void *mlx, void *mlx_win, t_data img);
+/* vector functions */
+t_vector ft_vector_rotate(t_vector vector, int clockwise);
+t_vector create_t_vec(float x, float y, float z);
+t_vector print_vec(t_vector vec);
+void normalise_vector(t_vector *vector);
+float vector_dot_product(t_vector v1, t_vector v2);
+float point_distance(t_vector v1, t_vector v2);
+t_vector vector_add_vector(t_vector v1, t_vector v2);
+t_vector vector_subtract_vector(t_vector v1, t_vector v2);
+t_vector vector_multi_k(t_vector v1, float k);
+float vector_length(t_vector vect);
 
 
-/* in formulas.c */
-float * vector_addition(float *vectora, float *vectorb);
-float * vector_subtraction(float *vectora, float *vectorb);
-float dot_product(float *vectora, float *vectorb);
-float *vector_float_multiplication(float *vectora, float value);
-float vector_length(float *vectora);
-float *cross_product(float *vectora, float *vectorb);
-float *find_ray_equation(float *vectora, float *direction_vector, float parameter_value);
-float *orthogonal_projection_single_vec(float *vectoru, float *vectorv, float *singular_subspace);
-float *convert_orthogonal_project_to_2d(float *vectoru, float *viewpoint_xyz);
-float *find_unit_vector(float *vector, float length);
-
-/* in light_types.c */
-float *find_reflection_vector(float *incident, float *normal);
-float *find_refraction_vector(float *incident, float *normal);
 #endif
