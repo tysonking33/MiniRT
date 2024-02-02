@@ -23,6 +23,7 @@ typedef struct s_object		t_object;
 typedef struct s_scene		t_scene;
 typedef struct s_rgb		t_rgb;
 
+
 typedef struct s_ambient
 {
 	float		lighting_ratio; // [0.0,1.0]
@@ -65,6 +66,13 @@ typedef struct s_object
 	struct s_object		*next;
 	struct s_object		*previous;
 }						t_object;
+
+typedef struct s_plane{
+	float width;
+	float height;
+	float x_pix;
+	float y_pix;
+}	t_plane;
 
 typedef struct s_eq
 {

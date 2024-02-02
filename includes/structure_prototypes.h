@@ -185,6 +185,7 @@ typedef struct s_minirt {
 	char		apply_texture;
 	char		apply_bump;
 	char		apply_checkerboard;
+	t_object	*objs;
 }				t_minirt;
 
 #endif

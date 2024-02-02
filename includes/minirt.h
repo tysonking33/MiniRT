@@ -28,6 +28,7 @@
 # define COL_BLACK		0x002B2B2A
 
 # include <stdio.h>
+# include <math.h>
 # include "structure_prototypes.h"
 
 
