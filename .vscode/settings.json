@@ -4,6 +4,8 @@
         "parse.h": "c",
         "__nullptr": "cpp",
         "limits": "cpp",
-        "type_traits": "cpp"
+        "type_traits": "cpp",
+        "objects.h": "c",
+        "structure_prototypes.h": "c"
     }
 }

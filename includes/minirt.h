@@ -30,6 +30,8 @@
 # include <stdio.h>
 # include <math.h>
 # include "structure_prototypes.h"
+#include "error.h"
+#include "objects.h"
 
 
 /* vector functions */
@@ -43,6 +45,38 @@ t_vector vector_add_vector(t_vector v1, t_vector v2);
 t_vector vector_subtract_vector(t_vector v1, t_vector v2);
 t_vector vector_multi_k(t_vector v1, float k);
 float vector_length(t_vector vect);
+
+/* errors_n_exits.c */
+static void	ft_free_lights(t_scene *scene);
+static void	ft_free_objects(t_scene *scene);
+void	ft_free_scene(t_scene *scene);
+void	ft_error(char *error_type, t_scene *scene);
+void	ft_normal_error(char *error_type, t_vector *norm_v);
+
+/* ray_tracing.c */
+t_plane *get_projection_plane(float scene_w, float scene_h, float angle);
+void ray_tracing(t_minirt *minirt);
+
+
+/* objects/ambient.c */
+void print_ambient(t_minirt *minirt);
+void	ft_init_ambient(t_minirt *minirt);
+void	ft_read_ambient(t_minirt *minirt, char *line);
+
+/* objects/camera.c */
+void	ft_free_camera(t_minirt *minirt);
+void	ft_print_camera(t_minirt *minirt);
+void	ft_init_camera(t_minirt *minirt);
+void	ft_read_camera(t_minirt *minirt, char *line);
+
+
+/* object/scone.c*/
+static int	in_range(float num, float range);
+static void	update_hit_point(t_intersection *hit, float dist, float m);
+static float	get_dist(	t_object *obj,
+							t_vector ray, t_eq body, t_vector origin);
+static inline float	find_dists_co(	t_object *obj,
+									t_vector ray, t_eq eq, t_vector origin);
 
 
 #endif

@@ -1,0 +1,46 @@
+#include "../../includes/minirt.h"
+#include "../../includes/objects.h"
+#include "../../includes/structure_prototypes.h"
+
+void print_ambient(t_minirt *minirt)
+{
+		printf("\033[35m\n########## AMBIENT ##########\n");
+		printf("[RATIO] %f\n", minirt->scene->ambient->lighting_ratio);
+		printf("[RGB] r: %d, g: %d, b: %d\n",
+			   minirt->ambient->rgb.r,
+			   minirt->ambient->rgb.g,
+			   minirt->ambient->rgb.b);
+		printf("[COLOR] %X\n", minirt->ambient->colour);
+		printf("---------- ------- ----------\n"COLOR_END);
+}
+
+void	ft_init_ambient(t_minirt *minirt)
+{
+	minirt->ambient = malloc(sizeof(t_ambient));
+	if (!minirt->ambient)
+	{
+		write(2, ERROR_MALLOC, ft_strlen(ERROR_MALLOC));
+		exit(ERROR_MALLOC_AMBIENT);
+	}
+}
+
+void	ft_read_ambient(t_minirt *minirt, char *line)
+{
+	int	i;
+
+	i = 1;
+	while (line[i] == ' ')
+		i++;
+	minirt->ambient->lighting_ratio = ft_atof(line, &i);
+	while (line[i] == ' ')
+		i++;
+	minirt->ambient->rgb.r = ft_atoi(&line[i]);
+	while (ft_isdigit(line[i]))
+		i++;
+	minirt->ambient->rgb.g = ft_atoi(&line[++i]);
+	while (ft_isdigit(line[i]))
+		i++;
+	minirt->ambient->rgb.b = ft_atoi(&line[++i]);
+	minirt->ambient->colour = ft_rgb_hex(0, minirt->ambient->rgb);
+	ft_print_ambient(minirt);
+}
