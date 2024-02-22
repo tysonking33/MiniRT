@@ -75,6 +75,8 @@ void start_game(t_data *data)
 
     create_background(data->height, data->width, *data);
     init_map(data);
+
+
     draw_player(data);
 
     mlx_put_image_to_window(data->mlx, data->mlx_win, data->img, 0, 0);
@@ -100,8 +102,15 @@ int main(void)
     data->player_1->player_y = 50.0;
     data->height = 1920;
     data->width = 1080;
+        data->player_1->player_x = 300;
+        data->player_1->player_y = 300;
+
+    data->player_1->player_delta_x = cos(data->player_1->player_angle) * 5;
+        data->player_1->player_delta_y = sin(data->player_1->player_angle) * 5;
     data->mlx = mlx_init();
     data->mlx_win = mlx_new_window(data->mlx, data->height, data->width, "Hello world!");
+
+    
 
     // Initialize img properly
     data->img = mlx_new_image(data->mlx, data->width, data->height);
