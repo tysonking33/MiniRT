@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+
 
 /* defining colors */
 #define RED 0x00FF0000
@@ -18,11 +20,17 @@
 #define BLACK 0x00000000
 #define WHITE 0x00FFFFFF
 
+#define PI 3.1415926535
+
 
 typedef struct s_player_info
 {
     float player_x;
     float player_y;
+
+    float player_delta_x;
+    float player_delta_y;
+    float player_angle;
 }   t_player_info;
 
 typedef struct s_map
@@ -53,6 +61,7 @@ typedef struct s_data
 /* in main.c */
 void draw_rectangle(int x_start, int x_end, int y_start, int y_end, t_data *data, int color);
 void create_background(int height, int width, t_data data);
+void drawLine(int x1, int y1, int x2, int y2, t_data *data, int color);
 void my_mlx_pixel_put(t_data *data, int x, int y, int color);
 void start_game(t_data *data);
 int main(void);

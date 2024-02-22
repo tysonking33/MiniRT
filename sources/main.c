@@ -30,6 +30,40 @@ void draw_rectangle(int x_start, int x_end, int y_start, int y_end, t_data *data
     }
 }
 
+void drawLine(int x1, int y1, int x2, int y2, t_data *data, int color)
+{
+    int dx = x2 - x1;
+    int dy = y2 - y1;
+    int x = x1, y = y1;
+
+    // Determine the sign of dx and dy
+    int signX = (dx > 0) ? 1 : -1;
+    int signY = (dy > 0) ? 1 : -1;
+
+    dx = abs(dx);
+    dy = abs(dy);
+
+    // Calculate decision variable
+    int d = 2 * dy - dx;
+
+    for (int i = 0; i <= dx; i++) {
+        // Plot the pixel at (x, y)
+        my_mlx_pixel_put(data, x, y, color);
+
+        // Update x and y based on the sign of dx and dy
+        x += signX;
+
+        // Update decision variable
+        if (d >= 0) {
+            y += signY;
+            d -= 2 * dx;
+        }
+
+        d += 2 * dy;
+    }
+
+}
+
 
 void start_game(t_data *data)
 {

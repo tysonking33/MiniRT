@@ -56,7 +56,7 @@ void init_map(t_data *data)
 void draw_map(t_data *data)
 {
     int square_size = data->map->map_height * data->map->map_width; // You need to adjust this based on your requirements
-    int outline_color = RED; // Choose the color for the outline
+    int outline_color = BLACK; // Choose the color for the outline
 
     // Draw rectangles for each cell
     for (int i = 0; i < data->map->map_height; i++)

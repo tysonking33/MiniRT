@@ -10,4 +10,6 @@ void draw_player(t_data *data)
     int end_y = (int)(data->player_1->player_y + 5);
     draw_rectangle(start_x, end_x, start_y, end_y, data, YELLOW);
 
+    //drawLine(data->player_1->player_x, data->player_1->player_y, data->player_1->player_x+data->player_1->player_delta_x*5, data->player_1->player_y+data->player_1->player_delta_y*5, data, RED);
+
 }
