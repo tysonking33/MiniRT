@@ -6,7 +6,6 @@ void init_map(t_data *data)
     int i, j;
 
     data->map->map_height = 8;
-
     data->map->map_width = 10;
 
     // Allocate memory for map_array
@@ -51,12 +50,15 @@ void init_map(t_data *data)
     draw_map(data);
 }
 
-//interate throught the map_array
-//offset by map_height*map_width
-//each character represents a square
+// Iterate through the map_array
+// Offset by map_height * map_width
+// Each character represents a square
 void draw_map(t_data *data)
 {
-    int square_size = 100; // You need to adjust this based on your requirements
+    int square_size = data->map->map_height * data->map->map_width; // You need to adjust this based on your requirements
+    int outline_color = RED; // Choose the color for the outline
+
+    // Draw rectangles for each cell
     for (int i = 0; i < data->map->map_height; i++)
     {
         for (int j = 0; j < data->map->map_width; j++)
@@ -64,13 +66,29 @@ void draw_map(t_data *data)
             if (data->map->map_array[i][j] == '1')
             {
                 // Wall - black
-                draw_rectangle(j * square_size, (j + 1) * square_size, i * square_size, (i + 1) * square_size, data, BLACK);
+                draw_rectangle(j * square_size, (j + 1) * square_size, i * square_size, (i + 1) * square_size, data, GREEN);
             }
             else
             {
                 // Empty - white
                 draw_rectangle(j * square_size, (j + 1) * square_size, i * square_size, (i + 1) * square_size, data, WHITE);
             }
+        }
+    }
+
+    // Draw outlines for each cell
+    for (int i = 0; i < data->map->map_height; i++)
+    {
+        for (int j = 0; j < data->map->map_width; j++)
+        {
+            // Top outline
+            draw_rectangle(j * square_size, (j + 1) * square_size, i * square_size, i * square_size + 1, data, outline_color);
+            // Bottom outline
+            draw_rectangle(j * square_size, (j + 1) * square_size, (i + 1) * square_size - 1, (i + 1) * square_size, data, outline_color);
+            // Left outline
+            draw_rectangle(j * square_size, j * square_size + 1, i * square_size, (i + 1) * square_size, data, outline_color);
+            // Right outline
+            draw_rectangle((j + 1) * square_size - 1, (j + 1) * square_size, i * square_size, (i + 1) * square_size, data, outline_color);
         }
     }
 }
