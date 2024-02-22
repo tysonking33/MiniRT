@@ -8,38 +8,44 @@ void my_mlx_pixel_put(t_data *data, int x, int y, int color)
     *(unsigned int *)dst = color;
 }
 
-void create_background(int height, int width, t_data img)
+void create_background(int height, int width, t_data data)
 {
     for (int i = 0; i < height; i++)
     {
         for (int j = 0; j < width; j++)
         {
-            my_mlx_pixel_put(&img, i, j, GREY);
+            my_mlx_pixel_put(&data, i, j, GREY);
         }
     }
 }
 
-void draw_rectangle(int x_start, int x_end, int y_start, int y_end, t_data img, int color)
+void draw_rectangle(int x_start, int x_end, int y_start, int y_end, t_data *data, int color)
 {
     for (int i = x_start; i < x_end; i++)
     {
         for (int j = y_start; j < y_end; j++)
         {
-            my_mlx_pixel_put(&img, i, j, color);
+            my_mlx_pixel_put(data, i, j, color);
         }
     }
 }
 
+
 void start_game(t_data *data)
 {
-    printf("inital player_1->player_x: %f, new player_1->player_y: %f\n", data->player_1->player_x, data->player_1->player_y);  
+    printf("initial player_1->player_x: %f, new player_1->player_y: %f\n", data->player_1->player_x, data->player_1->player_y);
+
+    // Initialize img properly
+    data->img = mlx_new_image(data->mlx, data->width, data->height);
+    data->addr = mlx_get_data_addr(data->img, &data->bits_per_pixel, &data->line_length, &data->endian);
 
     create_background(data->height, data->width, *data);
+    init_map(data);
     draw_player(data);
 
     mlx_put_image_to_window(data->mlx, data->mlx_win, data->img, 0, 0);
-    
 }
+
 
 int main(void)
 {

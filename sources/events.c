@@ -14,30 +14,30 @@ int keyevent(int keycode, t_data *data)
     }
     else if (keycode == 13) //w
     {
-        if (new_player_y - 1.0 > 10.0 && new_player_y - 1.0 < data->width - 10.0)
+        if (new_player_y - 10.0 > 10.0 && new_player_y - 10.0 < data->width - 10.0)
         {
-            new_player_y -= 1.0;
+            new_player_y -= 10.0;
         }
     }
     else if (keycode == 1) //s
     {
-        if (new_player_y + 1.0 > 10.0 && new_player_y + 1.0 < data->width - 10.0)
+        if (new_player_y + 10.0 > 10.0 && new_player_y + 10.0 < data->width - 10.0)
         {
-            new_player_y += 1.0;
+            new_player_y += 10.0;
         }
     }
     else if (keycode == 0) //a
     {
-        if (new_player_x - 1.0 > 10.0 && new_player_x - 1.0 < data->height - 10.0)
+        if (new_player_x - 10.0 > 10.0 && new_player_x - 10.0 < data->height - 10.0)
         {
-            new_player_x -= 1.0;
+            new_player_x -= 10.0;
         }
     }
     else if (keycode == 2) //d
     {
-        if (new_player_x + 1.0 > 10.0 && new_player_x + 1.0 < data->height - 10.0)
+        if (new_player_x + 10.0 > 10.0 && new_player_x + 10.0 < data->height - 10.0)
         {
-            new_player_x += 1.0;
+            new_player_x += 10.0;
         }
     }
 
