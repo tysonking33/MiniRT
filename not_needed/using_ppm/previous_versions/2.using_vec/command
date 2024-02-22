@@ -1,5 +1,0 @@
-#!/bin/bash
-
-gcc -Wall -Wextra -Werror *.c -o main.exe
-
-./main.exe

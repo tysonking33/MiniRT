@@ -9,6 +9,8 @@
         "mlx.h": "c",
         "unistd.h": "c",
         "vec.h": "c",
-        "vector": "cpp"
+        "vector": "cpp",
+        "cub3d.h": "c",
+        "stdio.h": "c"
     }
 }
