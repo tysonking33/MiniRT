@@ -2,7 +2,7 @@
 
 int keyevent(int keycode, t_data *data)
 {
-    printf("old player_1->player_x: %f, old player_1->player_y: %f\n", data->player_1->player_x, data->player_1->player_y);
+    //printf("old player_1->player_x: %f, old player_1->player_y: %f\n", data->player_1->player_x, data->player_1->player_y);
     printf("keycode pressed: %d\n", keycode);
 
     if (keycode == 53) //esc
@@ -40,6 +40,10 @@ int keyevent(int keycode, t_data *data)
         data->player_1->player_delta_x = cos(data->player_1->player_angle) * 5;
         data->player_1->player_delta_y = sin(data->player_1->player_angle) * 5;
     }
+
+    printf("player_x: %f, player_y: %f, player_delta_x: %f, player_delta_y: %f\n", 
+        data->player_1->player_x, data->player_1->player_y, data->player_1->player_delta_x
+        ,data->player_1->player_delta_y);
 
     // Redraw the player without redrawing the entire background
     start_game(data);

@@ -61,7 +61,12 @@ typedef struct s_data
 /* in main.c */
 void draw_rectangle(int x_start, int x_end, int y_start, int y_end, t_data *data, int color);
 void create_background(int height, int width, t_data data);
-void drawLine(int x1, int y1, int x2, int y2, t_data *data, int color);
+
+
+void plotLineLow(int x0, int y0, int x1, int y1, t_data *data, int color);
+void plotLineHigh(int x0, int y0, int x1, int y1, t_data *data, int color);
+
+void drawLine(int x0, int y0, int x1, int y1, t_data *data, int color);
 void my_mlx_pixel_put(t_data *data, int x, int y, int color);
 void start_game(t_data *data);
 int main(void);

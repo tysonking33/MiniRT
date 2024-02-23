@@ -6,7 +6,7 @@
 #    By: tytang <tytang@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/21 12:24:33 by tytang            #+#    #+#              #
-#    Updated: 2024/02/22 17:13:41 by tytang           ###   ########.fr        #
+#    Updated: 2024/02/23 14:40:31 by tytang           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,6 +26,7 @@ SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(FILES)))
 OBJS = $(SRCS:.c=.o)
 
 all: mlx_library $(NAME)
+	clear
 	./cub3d
 
 $(NAME): $(OBJS)

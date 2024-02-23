@@ -30,44 +30,86 @@ void draw_rectangle(int x_start, int x_end, int y_start, int y_end, t_data *data
     }
 }
 
-void drawLine(int x1, int y1, int x2, int y2, t_data *data, int color)
+void plotLineLow(int x0, int y0, int x1, int y1, t_data *data, int color)
 {
-    int dx = x2 - x1;
-    int dy = y2 - y1;
-    int x = x1, y = y1;
-
-    // Determine the sign of dx and dy
-    int signX = (dx > 0) ? 1 : -1;
-    int signY = (dy > 0) ? 1 : -1;
-
-    dx = abs(dx);
-    dy = abs(dy);
-
-    // Calculate decision variable
-    int d = 2 * dy - dx;
-
-    for (int i = 0; i <= dx; i++) {
-        // Plot the pixel at (x, y)
-        my_mlx_pixel_put(data, x, y, color);
-
-        // Update x and y based on the sign of dx and dy
-        x += signX;
-
-        // Update decision variable
-        if (d >= 0) {
-            y += signY;
-            d -= 2 * dx;
-        }
-
-        d += 2 * dy;
+    int dx = x1 - x0;
+    int dy = y1 - y0;
+    int yi = 1;
+    if (dy < 0)
+    {
+        yi = -1;
+        dy = -dy;
     }
+    int D = (2 * dy) - dx;
+    int y = y0;
+    for (int x = x0; x <= x1; x++)
+    {
+        my_mlx_pixel_put(data, x, y, color);
+        if (D > 0)
+        {    y += yi;
+            D += 2 * (dy - dx);
+        }
+        else
+        {
+            D += 2*dy;
+        }
+        
+    }
+}
 
+void plotLineHigh(int x0, int y0, int x1, int y1, t_data *data, int color)
+{
+    int dx = x1 - x0;
+    int dy = y1 - y0;
+    int xi = 1;
+    if (dx < 0)
+    {
+        xi = -1;
+        dx = -dx;
+    }
+    int D = (2 * dx) - dy;
+    int x = x0;
+
+    for (int y =  y0; y <= y1; y++)
+    {
+        my_mlx_pixel_put(data, x, y, color);
+        if (D > 0)
+        {
+            x += xi;
+            D += (2 *(dx - dy));
+        }
+        else
+        {
+            D += 2*dx;
+        }
+        
+    }
+}
+
+
+void drawLine(int x0, int y0, int x1, int y1, t_data *data, int color)
+{
+    if (abs(y1 - y0) < abs(x1 - x0))
+    {
+        if (x0 > x1)
+            plotLineLow(x1, y1, x0, y0, data, color);
+        else
+            plotLineLow(x0, y0, x1, y1, data, color);
+    }
+    else
+    {
+        if (y0 > y1)
+            plotLineHigh(x1, y1, x0, y0, data, color);
+        else
+            plotLineHigh(x0, y0, x1, y1, data, color);
+
+    }
 }
 
 
 void start_game(t_data *data)
 {
-    printf("initial player_1->player_x: %f, new player_1->player_y: %f\n", data->player_1->player_x, data->player_1->player_y);
+    //printf("initial player_1->player_x: %f, new player_1->player_y: %f\n", data->player_1->player_x, data->player_1->player_y);
 
     // Initialize img properly
     data->img = mlx_new_image(data->mlx, data->width, data->height);
@@ -98,15 +140,18 @@ int main(void)
         return -1;
     }
 
-    data->player_1->player_x = 50.0;
-    data->player_1->player_y = 50.0;
-    data->height = 1920;
+
+    data->height = 1500;
     data->width = 1080;
-        data->player_1->player_x = 300;
-        data->player_1->player_y = 300;
+    data->player_1->player_x = 300;
+    data->player_1->player_y = 300;
+    data->player_1->player_angle = 0;
 
     data->player_1->player_delta_x = cos(data->player_1->player_angle) * 5;
-        data->player_1->player_delta_y = sin(data->player_1->player_angle) * 5;
+    data->player_1->player_delta_y = sin(data->player_1->player_angle) * 5;
+    /*printf("(main) player_x: %f, player_y: %f, player_delta_x: %f, player_delta_y: %f\n", 
+        data->player_1->player_x, data->player_1->player_y, data->player_1->player_delta_x
+        ,data->player_1->player_delta_y);*/
     data->mlx = mlx_init();
     data->mlx_win = mlx_new_window(data->mlx, data->height, data->width, "Hello world!");
 
