@@ -8,6 +8,8 @@ void init_map(t_data *data)
     data->map->map_height = 8;
     data->map->map_width = 10;
 
+    data->map->square_size = 10;
+
     // Allocate memory for map_array
     data->map->map_array = (char **)malloc(data->map->map_height * sizeof(char *));
     if (!data->map->map_array)
@@ -66,7 +68,7 @@ void draw_map(t_data *data)
             if (data->map->map_array[i][j] == '1')
             {
                 // Wall - black
-                draw_rectangle(j * square_size, (j + 1) * square_size, i * square_size, (i + 1) * square_size, data, GREEN);
+                draw_rectangle(j * square_size, (j + 1) * square_size, i * square_size, (i + 1) * square_size, data, BLACK);
             }
             else
             {

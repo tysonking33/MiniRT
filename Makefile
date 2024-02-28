@@ -6,7 +6,7 @@
 #    By: tytang <tytang@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/21 12:24:33 by tytang            #+#    #+#              #
-#    Updated: 2024/02/23 14:40:31 by tytang           ###   ########.fr        #
+#    Updated: 2024/02/28 19:22:16 by tytang           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,9 +21,15 @@ FILES = main \
 		player \
 		events \
 		map \
+		draw_line \
+		draw_rays_3d \
+		utils \
 		
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(FILES)))
 OBJS = $(SRCS:.c=.o)
+
+print_all:
+	cat ./sources/*.c > output.txt
 
 all: mlx_library $(NAME)
 	clear

@@ -20,30 +20,31 @@ int keyevent(int keycode, t_data *data)
         data->player_1->player_x -= data->player_1->player_delta_x;
         data->player_1->player_y -= data->player_1->player_delta_y;
     }
-    else if (keycode == 0) //a
+    else if (keycode == 0) // a
     {
         data->player_1->player_angle -= 0.1;
         if (data->player_1->player_angle < 0)
         {
             data->player_1->player_angle += 2 * PI;
         }
+        // Update player delta values based on the new angle
         data->player_1->player_delta_x = cos(data->player_1->player_angle) * 5;
         data->player_1->player_delta_y = sin(data->player_1->player_angle) * 5;
     }
-    else if (keycode == 2) //d
+    else if (keycode == 2) // d
     {
         data->player_1->player_angle += 0.1;
         if (data->player_1->player_angle > 2 * PI)
         {
             data->player_1->player_angle -= 2 * PI;
         }
+        // Update player delta values based on the new angle
         data->player_1->player_delta_x = cos(data->player_1->player_angle) * 5;
         data->player_1->player_delta_y = sin(data->player_1->player_angle) * 5;
     }
 
-    printf("player_x: %f, player_y: %f, player_delta_x: %f, player_delta_y: %f\n", 
-        data->player_1->player_x, data->player_1->player_y, data->player_1->player_delta_x
-        ,data->player_1->player_delta_y);
+    printf("player_x: %f, player_y: %f, player_delta_x: %f, player_delta_y: %f\n",
+           data->player_1->player_x, data->player_1->player_y, data->player_1->player_delta_x, data->player_1->player_delta_y);
 
     // Redraw the player without redrawing the entire background
     start_game(data);

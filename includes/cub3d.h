@@ -21,6 +21,7 @@
 #define WHITE 0x00FFFFFF
 
 #define PI 3.1415926535
+#define FOV 90.0
 
 
 typedef struct s_player_info
@@ -38,6 +39,7 @@ typedef struct s_map
     int map_height;
     int map_width;
     char **map_array;
+    int square_size;
 }   t_map;
 
 typedef struct s_data
@@ -61,16 +63,14 @@ typedef struct s_data
 /* in main.c */
 void draw_rectangle(int x_start, int x_end, int y_start, int y_end, t_data *data, int color);
 void create_background(int height, int width, t_data data);
-
-
-void plotLineLow(int x0, int y0, int x1, int y1, t_data *data, int color);
-void plotLineHigh(int x0, int y0, int x1, int y1, t_data *data, int color);
-
-void drawLine(int x0, int y0, int x1, int y1, t_data *data, int color);
 void my_mlx_pixel_put(t_data *data, int x, int y, int color);
 void start_game(t_data *data);
 int main(void);
 
+/* in draw_line.c */
+void plotLineLow(int x0, int y0, int x1, int y1, t_data *data, int color);
+void plotLineHigh(int x0, int y0, int x1, int y1, t_data *data, int color);
+void drawLine(int x0, int y0, int x1, int y1, t_data *data, int color);
 
 /* in player.c */
 void draw_player(t_data *data);
@@ -81,5 +81,12 @@ int	keyevent(int keycode, t_data *data);
 /* in map.c */
 void init_map(t_data *data);
 void draw_map(t_data *data);
+
+/* in draw_rays_3d.c */
+void draw_3d_rays(t_data *data);
+
+/* in utils.c */
+float degToRad(int a);
+int FixAng(int a);
 
 #endif

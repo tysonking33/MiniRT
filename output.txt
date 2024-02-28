@@ -1,0 +1,483 @@
+#include "../includes/cub3d.h"
+
+void plotLineLow(int x0, int y0, int x1, int y1, t_data *data, int color)
+{
+    int dx = x1 - x0;
+    int dy = y1 - y0;
+    int yi = 1;
+    if (dy < 0)
+    {
+        yi = -1;
+        dy = -dy;
+    }
+    int D = (2 * dy) - dx;
+    int y = y0;
+    for (int x = x0; x <= x1; x++)
+    {
+        my_mlx_pixel_put(data, x, y, color);
+        if (D > 0)
+        {
+            y += yi;
+            D += 2 * (dy - dx);
+        }
+        else
+        {
+            D += 2 * dy;
+        }
+    }
+}
+
+void plotLineHigh(int x0, int y0, int x1, int y1, t_data *data, int color)
+{
+    int dx = x1 - x0;
+    int dy = y1 - y0;
+    int xi = 1;
+    if (dx < 0)
+    {
+        xi = -1;
+        dx = -dx;
+    }
+    int D = (2 * dx) - dy;
+    int x = x0;
+
+    for (int y = y0; y <= y1; y++)
+    {
+        my_mlx_pixel_put(data, x, y, color);
+        if (D > 0)
+        {
+            x += xi;
+            D += (2 * (dx - dy));
+        }
+        else
+        {
+            D += 2 * dx;
+        }
+    }
+}
+
+void drawLine(int x0, int y0, int x1, int y1, t_data *data, int color)
+{
+    if (abs(y1 - y0) < abs(x1 - x0))
+    {
+        if (x0 > x1)
+            plotLineLow(x1, y1, x0, y0, data, color);
+        else
+            plotLineLow(x0, y0, x1, y1, data, color);
+    }
+    else
+    {
+        if (y0 > y1)
+            plotLineHigh(x1, y1, x0, y0, data, color);
+        else
+            plotLineHigh(x0, y0, x1, y1, data, color);
+    }
+}#include "../includes/cub3d.h"
+void draw_3d_rays(t_data *data)
+{
+    int r, mx, my, mp, dof;
+    float vx, vy, rx, ry, ra, xo, yo, disV, disH;
+    int side;
+
+    ra = FixAng(data->player_1->player_angle + 30); // ray set back 30 degrees
+
+    for (r = 0; r < 60; r++)
+    {
+        //---Vertical---
+        dof = 0;
+        side = 0;
+        disV = 100000;
+        float Tan = tan(degToRad(ra));
+        if (cos(degToRad(ra)) > 0.001)
+        {
+            rx = (((int)data->player_1->player_x >> 6) << 6) + 64;
+            ry = (data->player_1->player_x - rx) * Tan + data->player_1->player_y;
+            xo = 64;
+            yo = -xo * Tan;
+        } //looking left
+        else if (cos(degToRad(ra)) < -0.001)
+        {
+            rx = (((int)data->player_1->player_x >> 6) << 6) - 0.0001;
+            ry = (data->player_1->player_x - rx) * Tan + data->player_1->player_y;
+            xo = -64;
+            yo = -xo * Tan;
+        } //looking right
+        else
+        {
+            rx = data->player_1->player_x;
+            ry = data->player_1->player_y;
+            dof = 8;
+        } //looking up or down. no hit
+
+        while (dof < 8)
+        {
+            mx = (int)(rx) >> 6;
+            my = (int)(ry) >> 6;
+            if (mx >= 0 && mx < data->map->map_width && my >= 0 && my < data->map->map_height)
+            {
+                mp = my * data->map->map_width + mx;
+                if (mp >= 0 && mp < data->map->map_width * data->map->map_height && data->map->map_array[my][mx] == '1')
+                {
+                    dof = 8;
+                    disV = cos(degToRad(ra)) * (rx - data->player_1->player_x) - sin(degToRad(ra)) * (ry - data->player_1->player_y);
+                } //hit
+                else
+                {
+                    rx += xo;
+                    ry += yo;
+                    dof += 1;
+                } //check next horizontal
+            }
+            else
+            {
+                break;
+            }
+        }
+        vx = rx;
+        vy = ry;
+
+        //---Horizontal---
+        dof = 0;
+        disH = 100000;
+        Tan = 1.0 / Tan;
+        if (sin(degToRad(ra)) > 0.001)
+        {
+            ry = (((int)data->player_1->player_y >> 6) << 6) - 0.0001;
+            rx = (data->player_1->player_y - ry) * Tan + data->player_1->player_x;
+            yo = -64;
+            xo = -yo * Tan;
+        } //looking up
+        else if (sin(degToRad(ra)) < -0.001)
+        {
+            ry = (((int)data->player_1->player_y >> 6) << 6) + 64;
+            rx = (data->player_1->player_y - ry) * Tan + data->player_1->player_x;
+            yo = 64;
+            xo = -yo * Tan;
+        } //looking down
+        else
+        {
+            rx = data->player_1->player_x;
+            ry = data->player_1->player_y;
+            dof = 8;
+        } //looking straight left or right
+
+        while (dof < 8)
+        {
+            mx = (int)(rx) >> 6;
+            my = (int)(ry) >> 6;
+            if (mx >= 0 && mx < data->map->map_width && my >= 0 && my < data->map->map_height)
+            {
+                mp = my * data->map->map_width + mx;
+                if (mp >= 0 && mp < data->map->map_width * data->map->map_height && data->map->map_array[my][mx] == '1')
+                {
+                    dof = 8;
+                    disH = cos(degToRad(ra)) * (rx - data->player_1->player_x) - sin(degToRad(ra)) * (ry - data->player_1->player_y);
+                } //hit
+                else
+                {
+                    rx += xo;
+                    ry += yo;
+                    dof += 1;
+                } //check next horizontal
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if (disV < disH)
+        {
+            rx = vx;
+            ry = vy;
+            disH = disV;
+        } //horizontal hit first
+
+        drawLine(data->player_1->player_x, data->player_1->player_y, rx, ry, data, GREEN);
+
+        int ca = FixAng(data->player_1->player_angle - ra);
+        disH = disH * cos(degToRad(ca)); //fix fisheye
+        int lineH = (data->map->square_size * 320) / (disH);
+        if (lineH > 320)
+        {
+            lineH = 320;
+        }                                 //line height and limit
+        int lineOff = 160 - (lineH >> 1); //line offset
+
+        drawLine(r * 8 + 530, lineOff, r * 8 + 530, lineOff + lineH, data, RED);
+
+        ra = FixAng(ra - 1); //go to the next ray
+    }
+}
+#include "../includes/cub3d.h"
+
+int keyevent(int keycode, t_data *data)
+{
+    //printf("old player_1->player_x: %f, old player_1->player_y: %f\n", data->player_1->player_x, data->player_1->player_y);
+    printf("keycode pressed: %d\n", keycode);
+
+    if (keycode == 53) //esc
+    {
+        mlx_destroy_window(data->mlx, data->mlx_win);
+        exit(0);
+    }
+    else if (keycode == 13) //w
+    {
+        data->player_1->player_x += data->player_1->player_delta_x;
+        data->player_1->player_y += data->player_1->player_delta_y;
+    }
+    else if (keycode == 1) //s
+    {
+        data->player_1->player_x -= data->player_1->player_delta_x;
+        data->player_1->player_y -= data->player_1->player_delta_y;
+    }
+    else if (keycode == 0) //a
+    {
+        data->player_1->player_angle -= 0.1;
+        if (data->player_1->player_angle < 0)
+        {
+            data->player_1->player_angle += 2 * PI;
+        }
+        data->player_1->player_delta_x = cos(data->player_1->player_angle) * 5;
+        data->player_1->player_delta_y = sin(data->player_1->player_angle) * 5;
+    }
+    else if (keycode == 2) //d
+    {
+        data->player_1->player_angle += 0.1;
+        if (data->player_1->player_angle > 2 * PI)
+        {
+            data->player_1->player_angle -= 2 * PI;
+        }
+        data->player_1->player_delta_x = cos(data->player_1->player_angle) * 5;
+        data->player_1->player_delta_y = sin(data->player_1->player_angle) * 5;
+    }
+
+    printf("player_x: %f, player_y: %f, player_delta_x: %f, player_delta_y: %f\n", 
+        data->player_1->player_x, data->player_1->player_y, data->player_1->player_delta_x
+        ,data->player_1->player_delta_y);
+
+    // Redraw the player without redrawing the entire background
+    start_game(data);
+
+    return 1;
+}
+#include "../includes/cub3d.h"
+
+void my_mlx_pixel_put(t_data *data, int x, int y, int color)
+{
+    char *dst;
+
+    dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
+    *(unsigned int *)dst = color;
+}
+
+void create_background(int height, int width, t_data data)
+{
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            my_mlx_pixel_put(&data, i, j, GREY);
+        }
+    }
+}
+
+void draw_rectangle(int x_start, int x_end, int y_start, int y_end, t_data *data, int color)
+{
+    for (int i = x_start; i < x_end; i++)
+    {
+        for (int j = y_start; j < y_end; j++)
+        {
+            my_mlx_pixel_put(data, i, j, color);
+        }
+    }
+}
+
+void start_game(t_data *data)
+{
+    //printf("initial player_1->player_x: %f, new player_1->player_y: %f\n", data->player_1->player_x, data->player_1->player_y);
+
+    // Initialize img properly
+    data->img = mlx_new_image(data->mlx, data->width, data->height);
+    data->addr = mlx_get_data_addr(data->img, &data->bits_per_pixel, &data->line_length, &data->endian);
+
+    create_background(data->height, data->width, *data);
+    init_map(data);
+
+    draw_player(data);
+
+    mlx_put_image_to_window(data->mlx, data->mlx_win, data->img, 0, 0);
+}
+
+int main(void)
+{
+    t_data *data;
+
+    data = (t_data *)malloc(sizeof(t_data));
+    if (!data)
+        return -1; // Check for successful memory allocation
+
+    data->player_1 = (t_player_info *)malloc(sizeof(t_player_info));
+    if (!data->player_1)
+    {
+        free(data); // Free memory in case of failure
+        return -1;
+    }
+
+    data->height = 1500;
+    data->width = 1080;
+    data->player_1->player_x = 300;
+    data->player_1->player_y = 300;
+    data->player_1->player_angle = 0;
+
+    data->player_1->player_delta_x = cos(data->player_1->player_angle) * 5;
+    data->player_1->player_delta_y = sin(data->player_1->player_angle) * 5;
+    /*printf("(main) player_x: %f, player_y: %f, player_delta_x: %f, player_delta_y: %f\n", 
+        data->player_1->player_x, data->player_1->player_y, data->player_1->player_delta_x
+        ,data->player_1->player_delta_y);*/
+    data->mlx = mlx_init();
+    data->mlx_win = mlx_new_window(data->mlx, data->height, data->width, "Hello world!");
+
+    // Initialize img properly
+    data->img = mlx_new_image(data->mlx, data->width, data->height);
+    data->addr = mlx_get_data_addr(data->img, &data->bits_per_pixel, &data->line_length, &data->endian);
+
+    start_game(data);
+    mlx_hook(data->mlx_win, 2, 3, keyevent, data);
+    mlx_loop(data->mlx);
+
+    // Don't forget to free allocated memory before exiting
+    free(data->player_1);
+    free(data);
+
+    return 0;
+}
+#include "../includes/cub3d.h"
+
+void init_map(t_data *data)
+{
+    data->map = (t_map *)malloc(sizeof(t_map));
+    int i, j;
+
+    data->map->map_height = 8;
+    data->map->map_width = 10;
+
+    data->map->square_size = 10;
+
+    // Allocate memory for map_array
+    data->map->map_array = (char **)malloc(data->map->map_height * sizeof(char *));
+    if (!data->map->map_array)
+    {
+        // Handle memory allocation failure
+        fprintf(stderr, "Error: Memory allocation for map_array failed.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (i = 0; i < data->map->map_height; i++)
+    {
+        data->map->map_array[i] = (char *)malloc(data->map->map_width * sizeof(char));
+        if (!data->map->map_array[i])
+        {
+            // Handle memory allocation failure
+            fprintf(stderr, "Error: Memory allocation for map_array row %d failed.\n", i);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    // Initialize map_array with values
+    char initialMap[8][10] = {
+        {'1', '1', '1', '1', '1', '1', '1', '1', '1', '1'},
+        {'1', '0', '0', '1', '0', '0', '0', '0', '0', '1'},
+        {'1', '0', '0', '1', '0', '0', '0', '1', '0', '1'},
+        {'1', '0', '0', '0', '0', '0', '0', '1', '0', '1'},
+        {'1', '0', '0', '1', '1', '1', '0', '0', '1', '1'},
+        {'1', '0', '0', '0', '0', '0', '0', '0', '1', '1'},
+        {'1', '0', '0', '0', '0', '0', '0', '0', '0', '1'},
+        {'1', '1', '1', '1', '1', '1', '1', '1', '1', '1'}};
+
+    // Copy values to map_array
+    for (i = 0; i < data->map->map_height; i++)
+    {
+        for (j = 0; j < data->map->map_width; j++)
+        {
+            data->map->map_array[i][j] = initialMap[i][j];
+        }
+    }
+    draw_map(data);
+}
+
+// Iterate through the map_array
+// Offset by map_height * map_width
+// Each character represents a square
+void draw_map(t_data *data)
+{
+    int square_size = data->map->map_height * data->map->map_width; // You need to adjust this based on your requirements
+    int outline_color = BLACK; // Choose the color for the outline
+
+    // Draw rectangles for each cell
+    for (int i = 0; i < data->map->map_height; i++)
+    {
+        for (int j = 0; j < data->map->map_width; j++)
+        {
+            if (data->map->map_array[i][j] == '1')
+            {
+                // Wall - black
+                draw_rectangle(j * square_size, (j + 1) * square_size, i * square_size, (i + 1) * square_size, data, BLACK);
+            }
+            else
+            {
+                // Empty - white
+                draw_rectangle(j * square_size, (j + 1) * square_size, i * square_size, (i + 1) * square_size, data, WHITE);
+            }
+        }
+    }
+
+    // Draw outlines for each cell
+    for (int i = 0; i < data->map->map_height; i++)
+    {
+        for (int j = 0; j < data->map->map_width; j++)
+        {
+            // Top outline
+            draw_rectangle(j * square_size, (j + 1) * square_size, i * square_size, i * square_size + 1, data, outline_color);
+            // Bottom outline
+            draw_rectangle(j * square_size, (j + 1) * square_size, (i + 1) * square_size - 1, (i + 1) * square_size, data, outline_color);
+            // Left outline
+            draw_rectangle(j * square_size, j * square_size + 1, i * square_size, (i + 1) * square_size, data, outline_color);
+            // Right outline
+            draw_rectangle((j + 1) * square_size - 1, (j + 1) * square_size, i * square_size, (i + 1) * square_size, data, outline_color);
+        }
+    }
+}
+#include "../includes/cub3d.h"
+
+void draw_player(t_data *data)
+{
+    int start_x = (int)(data->player_1->player_x - 5);
+    int end_x = (int)(data->player_1->player_x + 5);
+    int start_y = (int)(data->player_1->player_y - 5);
+    int end_y = (int)(data->player_1->player_y + 5);
+
+    // Clear the screen (draw background)
+    create_background(data->height, data->width, *data);
+
+    // Draw the 2D map with updated player position and rotation
+    draw_map(data);
+
+    // Draw the player on the 2D map
+    draw_rectangle(start_x, end_x, start_y, end_y, data, YELLOW);
+
+    // Draw the 3D rays
+    draw_3d_rays(data);
+
+    // Update the window with the new content
+    mlx_put_image_to_window(data->mlx, data->mlx_win, data->img, 0, 0);
+
+    // Print the updated player information (optional)
+    printf("player_x: %f, player_y: %f, player_delta_x: %f, player_delta_y: %f\n", 
+        data->player_1->player_x, data->player_1->player_y, data->player_1->player_delta_x,
+        data->player_1->player_delta_y);
+}
+#include "../includes/cub3d.h"
+
+
+float degToRad(int a) { return a*M_PI/180.0;}
+int FixAng(int a){ if(a>359){ a-=360;} if(a<0){ a+=360;} return a;}
