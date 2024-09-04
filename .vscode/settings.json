@@ -10,6 +10,8 @@
         "utility": "c",
         "stdio.h": "c",
         "keys.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "window_keys.h": "c",
+        "data.h": "c"
     }
 }

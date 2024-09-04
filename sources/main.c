@@ -10,55 +10,66 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../mlx_linux/mlx.h"
-#include "../includes/Window_Keys.h"
-#include <stdio.h>
-#include <stdlib.h>
 
-typedef struct	s_data {
-	void	*img;
-	char	*addr;
-	int		bits_per_pixel;
-	int		line_length;
-	int		endian;
-}				t_data;
+#include "../includes/Data.h"
 
-typedef struct	s_vars {
-	void	*mlx;
-	void	*win;
-}				t_vars;
 
-int	key_hook(int keycode, t_vars *vars)
+// Callback function for key events
+// Prints the keycode and exits if the Escape key is pressed
+int key_hook(int keycode, t_vars *vars)
 {
-	printf("Keycode: %d\n", keycode );
-	(void)vars;
-	printf("Hello from key_hook!\n");
-	if (keycode == KEY_ESCAPE)
+	printf("Keycode: %d\n", keycode);  // Print the keycode
+	if (keycode == KEY_ESCAPE)          // Check if Escape key is pressed
 	{
-		printf("exit");
-		exit(1);
+		printf("Exiting...\n");       // Print exit message
+		exit(EXIT_SUCCESS);           // Exit the program
 	}
 	return (0);
 }
 
-void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
+// Puts a pixel of a given color at (x, y) in the image
+void my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
-	char	*dst;
+	char *dst;
 
+	// Calculate the address of the pixel and set its color
 	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
 	*(unsigned int*)dst = color;
 }
 
-int	main(void)
+// Initializes MLX, creates a window, and sets up the image
+void initialize_mlx(t_vars *vars, t_data *img, float width, float height)
 {
+	vars->mlx = mlx_init();                     // Initialize MLX
+	vars->win = mlx_new_window(vars->mlx, width, height, "Hello world!"); // Create a new window
+	img->img = mlx_new_image(vars->mlx, width, height); // Create a new image
+	img->addr = mlx_get_data_addr(img->img, &img->bits_per_pixel, &img->line_length, &img->endian); // Get image data address
+}
 
-	t_vars	vars;
+// Draws a simple example pattern on the image
+void draw_example(t_data *img)
+{
+	// Draw a 2x2 red square
+	my_mlx_pixel_put(img, 5, 5, RED);
+	my_mlx_pixel_put(img, 15, 15, RED);
+	my_mlx_pixel_put(img, 5, 15, RED);
+	my_mlx_pixel_put(img, 15, 5, RED);
+}
 
-	t_data	img;
-	(void)img;
+// Main function
+int main(void)
+{
+	float height = 768;  // Window height
+	float width = 1366;  // Window width
+	t_vars vars;          // MLX and window variables
+	t_data img;           // Image data
 
-	vars.mlx = mlx_init();
-	vars.win = mlx_new_window(vars.mlx, 1366, 768, "Hello world!");
-	mlx_key_hook(vars.win, key_hook, &vars);
-	mlx_loop(vars.mlx);
+	initialize_mlx(&vars, &img, width, height); // Initialize MLX and create window and image
+	draw_example(&img); // Draw example pattern on the image
+	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 0, 0); // Put image to window
+
+	mlx_key_hook(vars.win, key_hook, &vars); // Set up the key event handler
+	mlx_loop(vars.mlx); // Enter the MLX event loop
+
+	return (0); // Return success
 }
