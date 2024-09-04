@@ -14,51 +14,64 @@
 #include <stdlib.h>*/
 #include "libft.h"
 
-int	ft_mstrlen(long long_n)
+static int	ft_nbr_len(int nb)
 {
-	int	ctr;
+	int i;
 
-	ctr = 0;
-	if (long_n < 0)
+	i = 1;
+	if (nb < 0)
 	{
-		long_n = long_n * -1;
-		ctr++;
+		i++;
+		nb *= -1;
 	}
-	while (long_n > 0)
+	while (nb > 9)
 	{
-		long_n = long_n / 10;
-		ctr++;
+		nb /= 10;
+		i++;
 	}
-	return (ctr);
+	return (i);
 }
 
-char	*ft_itoa(int n)
+static int	ft_div(int len)
 {
-	long	long_n;
-	int		length_long_n;
-	char	*dest;
+	int i;
 
-	long_n = n;
-	length_long_n = ft_mstrlen(long_n);
-	dest = (char *)malloc((sizeof (char)) *(length_long_n) + 1);
-	if (dest == NULL)
+	i = 1;
+	if (len == 1)
+		return (1);
+	while (len > 1)
+	{
+		i *= 10;
+		len--;
+	}
+	return (i);
+}
+
+char		*ft_itoa(int n)
+{
+	int		i;
+	int		len;
+	int		len2;
+	char	*result;
+
+	i = 0;
+	len = ft_nbr_len(n);
+	len2 = len;
+	if ((result = (char*)malloc(sizeof(char) * (len + 1))) == NULL)
 		return (NULL);
-	dest[length_long_n--] = '\0';
-	if (long_n == 0)
-		dest[0] = 48;
-		dest[1] = '\0';
-	if (long_n < 0)
+	if (n == -2147483648)
+		return (ft_strdup("-2147483648"));
+	if (n < 0)
 	{
-		dest[0] = '-';
-		long_n = long_n * -1;
+		n *= -1;
+		result[0] = '-';
+		i++;
+		len--;
 	}
-	while (long_n > 0)
-	{
-		dest[length_long_n] = 48 + (long_n % 10);
-		long_n = long_n / 10;
-		length_long_n--;
-	}
-	return (dest);
+	while (i < len2)
+		result[i++] = ((n / ft_div(len--)) % 10) + 48;
+	result[i] = '\0';
+	return (result);
 }
 /*
 int	main(void)

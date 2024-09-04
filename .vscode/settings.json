@@ -1,9 +1,15 @@
 {
     "files.associations": {
-        "minirt.h": "c",
-        "parse.h": "c",
-        "__nullptr": "cpp",
-        "limits": "cpp",
-        "type_traits": "cpp"
+        "mlx.h": "c",
+        "array": "c",
+        "functional": "c",
+        "istream": "c",
+        "ostream": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c",
+        "stdio.h": "c",
+        "keys.h": "c",
+        "stdlib.h": "c"
     }
 }

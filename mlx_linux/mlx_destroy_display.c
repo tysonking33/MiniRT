@@ -1,30 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*   mlx_destroy_display.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tytang <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: mg <mg@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/02/28 17:29:43 by tytang            #+#    #+#             */
-/*   Updated: 2022/04/04 11:52:53 by tytang           ###   ########.fr       */
+/*   Created: 2020/10/03 18:56:35 by mg                #+#    #+#             */
+/*   Updated: 2020/10/04 01:55:35 by mg               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*#include <stdio.h>*/
-#include "libft.h"
+#include "mlx_int.h"
 
-void	*ft_calloc(size_t count, size_t size)
+int	mlx_destroy_display(t_xvar *xvar)
 {
-	void	*ptr;
-
-	ptr = malloc(count * size);
-	if (ptr == NULL)
-	{
-		return (NULL);
-	}
-	else
-	{
-		ft_bzero(ptr, count * size);
-	}
-	return (ptr);
+	XCloseDisplay(xvar->display);
 }
