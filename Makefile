@@ -19,6 +19,8 @@ LINKS = -I./includes -L./libft -lft -L./mlx_linux -lmlx_Linux -L/usr/lib -lX11 -
 SRCS_DIR = sources/
 
 FILES = main \
+		math \
+		sphere \
 
 
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(FILES)))

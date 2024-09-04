@@ -41,9 +41,19 @@ typedef struct s_sphere{
 // Function prototypes
 
 /*-------------------------------main.c---------------------------------------------------------*/
-static int	key_hook(int keycode, t_vars *vars);
-static void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
-static void	initialize_mlx(t_vars *vars, t_data *img, float width, float height);
-static void	draw_example(t_data *img);
+int     key_hook(int keycode, t_vars *vars);
+void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
+void	initialize_mlx(t_vars *vars, t_data *img, float width, float height);
+void	draw_example(t_data *img);
+void initalise_data(t_vars *vars,t_data *img, float width, float height);
+
+
+/*-------------------------------sphere.c--------------------------------------------------------*/
+void raytraceSphere();
+void plotHorizontalLine(int x1, int x2, int y, t_data *img);
+void drawFilledCircle(int xc, int yc, int r, t_data *img);
+void drawSphere(t_data *img);
+
+
 
 #endif

@@ -12,12 +12,14 @@
 
 
 #include "../includes/Data.h"
+#include "../includes/Math.h"
 
 
 // Callback function for key events
 // Prints the keycode and exits if the Escape key is pressed
 int key_hook(int keycode, t_vars *vars)
 {
+	(void)vars;
 	printf("Keycode: %d\n", keycode);  // Print the keycode
 	if (keycode == KEY_ESCAPE)          // Check if Escape key is pressed
 	{
@@ -46,6 +48,12 @@ void initialize_mlx(t_vars *vars, t_data *img, float width, float height)
 	img->addr = mlx_get_data_addr(img->img, &img->bits_per_pixel, &img->line_length, &img->endian); // Get image data address
 }
 
+void initalise_data(t_vars *vars,t_data *img, float width, float height)
+{
+		img->img = mlx_new_image(vars->mlx, width, height); // Create a new image
+	img->addr = mlx_get_data_addr(img->img, &img->bits_per_pixel, &img->line_length, &img->endian); // Get image data address
+}
+
 // Draws a simple example pattern on the image
 void draw_example(t_data *img)
 {
@@ -66,7 +74,14 @@ int main(void)
 
 	initialize_mlx(&vars, &img, width, height); // Initialize MLX and create window and image
 	draw_example(&img); // Draw example pattern on the image
-	mlx_put_image_to_window(vars.mlx, vars.win, img.img, 0, 0); // Put image to window
+
+	t_data sphere;
+	initalise_data(&vars, &sphere, width, height);
+
+	drawSphere(&sphere);
+
+
+	mlx_put_image_to_window(vars.mlx, vars.win, sphere.img, 0, 0); // Put image to window
 
 	mlx_key_hook(vars.win, key_hook, &vars); // Set up the key event handler
 	mlx_loop(vars.mlx); // Enter the MLX event loop

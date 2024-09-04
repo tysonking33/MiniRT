@@ -1,4 +1,4 @@
-#include "Data.h"
+#include "../includes/Math.h"
 
 struct s_vec3 vec3_sub(struct s_vec3 lhs, struct s_vec3 rhs)
 {
@@ -51,13 +51,13 @@ float intersectRaySphere(struct s_ray ray, struct s_sphere sphere)
     float a = dot(*(ray.origin), *(ray.direction));
     float b = 2 * (dot(L, *(ray.direction)));
     float c = (dot(L, L)) - pow(sphere.radius, 2);
-    float discriminant = pow(b,2) - 4 * a * c;
+    float discrim = pow(b,2) - 4 * a * c;
 
-    if (discriminant > 0)
+    if (discrim > 0)
     {
         printf("2 intersection points, ray passed through sphere\n");
     }
-    else if (discriminant == 0)
+    else if (discrim == 0)
     {
         printf("1 intersection point, ray is tangent to sphere\n");
     }
@@ -65,7 +65,7 @@ float intersectRaySphere(struct s_ray ray, struct s_sphere sphere)
     {
         printf("No intersection");
     }
-    return discriminant;
+    return discrim;
 }
 
 struct s_vec3 *findPointOfRaySphereIntersect(struct s_ray ray, struct s_sphere sphere, float discriminant)
@@ -73,8 +73,7 @@ struct s_vec3 *findPointOfRaySphereIntersect(struct s_ray ray, struct s_sphere s
     struct s_vec3 L = vec3_sub(*(ray.origin), *(sphere.origin));
     float a = dot(*(ray.origin), *(ray.direction));
     float b = 2 * (dot(L, *(ray.direction)));
-    float c = (dot(L, L)) - pow(sphere.radius, 2);
-    float discriminant = pow(b,2) - 4 * a * c;
+    //float c = (dot(L, L)) - pow(sphere.radius, 2);
 
     float tPlus = (-b + sqrt(discriminant))/ (2*a);
     float tSub = (-b - sqrt(discriminant))/ (2*a);
@@ -98,6 +97,8 @@ struct s_vec3 *findPointOfRaySphereIntersect(struct s_ray ray, struct s_sphere s
         struct s_vec3 temp_vec = rayAt(ray, tSub);
         array[count] = temp_vec;
     }
+
+    return array;
 }
 
 

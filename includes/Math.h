@@ -2,6 +2,7 @@
 #define MATH_H
 
 #include "./Data.h"
+#include <math.h>
 
 struct s_vec3 vec3_sub(struct s_vec3 lhs, struct s_vec3 rhs);
 struct s_vec3 vec3_add(struct s_vec3 lhs, struct s_vec3 rhs);
