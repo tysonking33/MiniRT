@@ -78,7 +78,9 @@ int main(void)
 	t_data sphere;
 	initalise_data(&vars, &sphere, width, height);
 
-	drawSphere(&sphere);
+	//drawSphere(&sphere);
+
+	renderScene(&sphere);
 
 
 	mlx_put_image_to_window(vars.mlx, vars.win, sphere.img, 0, 0); // Put image to window

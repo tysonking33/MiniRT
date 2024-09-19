@@ -1,0 +1,32 @@
+Typical FOV Values
+Standard Values:
+
+90 degrees: Commonly used for a realistic perspective, similar to human vision or typical camera lenses.
+60 degrees: Often used for a more zoomed-in effect, making objects appear larger and closer.
+45 degrees: Can give a more "telephoto" effect, making objects appear even closer and more magnified.
+Wide Angle:
+
+120 to 180 degrees: This is considered a very wide-angle view. It’s often used for fisheye lenses or when you want to capture a very broad view of the scene.
+
+If the lighting model results in (1.0,0.5,0.3), this corresponds to an RGB color with strong red, moderate green, and little blue, producing a reddish-orange color.
+
+
+
+Role of n (Shininess Factor):
+Higher values of n: Create smaller, sharper specular highlights, giving the appearance of a smooth or glossy surface. For example, a highly polished surface like metal or glass would have a high shininess factor
+Lower values of n: Produce larger, softer specular highlights, making the surface look rougher or more matte. For instance, a rough surface like wood or unpolished stone would have a low shininess factor (e.g., 
+
+n is the shininess factor.
+Typical Values for n:
+Glossy surfaces (like polished metal): 
+n=100 to n=200.
+Semi-glossy surfaces (like plastic): 
+n=20 to n=50.
+Matte surfaces (like rough stone or fabric): 
+n=1 to n=10.
+
+
+
+ka : Controls how much ambient light is reflected.
+kd : Controls how much diffuse light is scattered from direct light sources.
+ks : Controls how much light is reflected in a specular (mirror-like) manner.

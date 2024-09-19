@@ -1,101 +1,181 @@
 #include "../includes/Data.h"
-/*
-void raytraceSphere()
-{
-    float height = 768;  // Window height
-    float width = 1366;  // Window width
+#include "../includes/Math.h"
 
-    struct s_ray camera; //camera position origin
-    camera.origin->x = 0;
-    camera.origin->y = 0;
-    camera.origin->z = 0;
 
-    camera.direction->x = 0;
-    camera.direction->y = 1;
-    camera.direction->z = 0;
 
-    struct s_ray light; //light source origin
-    light.origin->x = 1;
-    light.origin->y = 1;
-    light.origin->z = 1;
-
-    light.direction->x = 0;
-    light.direction->y = 1;
-    light.direction->z = 0;
-}
-*/
-
-// Plot a horizontal line from (x1, y) to (x2, y)
-void plotHorizontalLine(int x1, int x2, int y, t_data *img) {
-    if (x1 > x2) {
-        int temp = x1;
-        x1 = x2;
-        x2 = temp;
-    }
-    for (int x = x1; x <= x2; x++) {
-        my_mlx_pixel_put(img, x, y, GREEN);
+float find_smaller_positive_float(float a, float b) {
+    // Check both floats and find the smaller one that is greater than 0
+    if (a > 0 && b > 0) {
+        return (a < b) ? a : b;
+    } else if (a > 0) {
+        return a;
+    } else if (b > 0) {
+        return b;
+    } else {
+        return 0; // Return 0 if neither float is positive
     }
 }
 
-// Midpoint Circle Algorithm to draw a filled circle
-void drawFilledCircle(int xc, int yc, int r, t_data *img) {
-    int x = 0;
-    int y = r;
-    int d = 3 - 2 * r; // Initial decision parameter
+// Convert RGBA to 32-bit hexadecimal color format
+uint32_t rgbaToHex(struct s_vec3 color) {
+    // Clamp the color values between 0 and 1 and then scale to 0-255
+    uint8_t r = (uint8_t)(color.x * 255);
+    uint8_t g = (uint8_t)(color.y * 255);
+    uint8_t b = (uint8_t)(color.z * 255);
+    uint8_t a = (uint8_t)(255 * 255);
 
-    while (x <= y) {
-        // Plot horizontal lines for the current y position
-        plotHorizontalLine(xc - x, xc + x, yc + y, img);
-        plotHorizontalLine(xc - x, xc + x, yc - y, img);
-        plotHorizontalLine(xc - y, xc + y, yc + x, img);
-        plotHorizontalLine(xc - y, xc + y, yc - x, img);
+    // Combine the components into a single 32-bit hexadecimal color
+    uint32_t hexColor = (a << 24) | (r << 16) | (g << 8) | b;
+    return hexColor;
+}
 
-        // Mirror lines for the lower part of the circle
-        plotHorizontalLine(xc - x, xc + x, yc + y, img);
-        plotHorizontalLine(xc - x, xc + x, yc - y, img);
-        plotHorizontalLine(xc - y, xc + y, yc + x, img);
-        plotHorizontalLine(xc - y, xc + y, yc - x, img);
+void renderScene(t_data *img) {
 
-        // Update decision parameter and coordinates
-        x++;
-        if (d < 0) {
-            d = d + 4 * x + 6;
-        } else {
-            y--;
-            d = d + 4 * (x - y) + 10;
+    // Initialize camera and light
+    struct s_ray *cameraObj = (struct s_ray *)malloc(sizeof(struct s_ray));
+    struct s_ray *light = (struct s_ray *)malloc(sizeof(struct s_ray));
+    if (!cameraObj || !light) {
+        fprintf(stderr, "Memory allocation failed for cameraObj or light\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Allocate memory for `origin` and `direction`
+    cameraObj->origin = (struct s_vec3 *)malloc(sizeof(struct s_vec3));
+    cameraObj->direction = (struct s_vec3 *)malloc(sizeof(struct s_vec3));
+    light->origin = (struct s_vec3 *)malloc(sizeof(struct s_vec3));
+    if (!cameraObj->origin || !cameraObj->direction || !light->origin) {
+        fprintf(stderr, "Memory allocation failed for cameraObj->origin, cameraObj->direction, or light->origin\n");
+        free(cameraObj->origin);
+        free(cameraObj->direction);
+        free(cameraObj);
+        free(light->origin);
+        free(light);
+        exit(EXIT_FAILURE);
+    }
+
+    // Camera setup
+    cameraObj->origin->x = width / 2;
+    cameraObj->origin->y = height / 2;
+    cameraObj->origin->z = 0;
+    cameraObj->direction->x = 1;
+    cameraObj->direction->y = 0;
+    cameraObj->direction->z = -1;
+
+    // Light setup
+    light->origin->x = -200;
+    light->origin->y = 200;
+    light->origin->z = -100;
+
+    float fov = 90.0f;
+
+    // Loop through each pixel
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            // Generate a ray for the current pixel
+            struct s_ray *ray = (struct s_ray *)malloc(sizeof(struct s_ray));
+            if (!ray) {
+                fprintf(stderr, "Memory allocation failed for ray\n");
+                exit(EXIT_FAILURE);
+            }
+
+            // Allocate memory for `direction` of the new ray
+            ray->direction = (struct s_vec3 *)malloc(sizeof(struct s_vec3));
+            if (!ray->direction) {
+                fprintf(stderr, "Memory allocation failed for ray->direction\n");
+                free(ray);
+                exit(EXIT_FAILURE);
+            }
+
+            ray->origin = cameraObj->origin;
+            struct s_vec3 resultingDir = generateRayDirection(x, y, width, height, fov);
+            ray->direction->x = resultingDir.x;
+            ray->direction->y = resultingDir.y;
+            ray->direction->z = resultingDir.z;
+
+            // Call raytraceSphere for the current pixel
+            struct s_vec3 pixelColor = raytraceSphere(*ray, *light->origin);
+
+            // Set the pixel color
+            uint32_t uIntPixelColor = rgbaToHex(pixelColor);
+            my_mlx_pixel_put(img, x, y, uIntPixelColor);
+
+            // Free memory allocated for the ray
+            free(ray->direction);
+            free(ray);
         }
     }
+
+    // Free memory allocated for camera and light
+    free(cameraObj->origin);
+    free(cameraObj->direction);
+    free(cameraObj);
+    free(light->origin);
+    free(light);
 }
 
 
-void drawSphere(t_data *img) {
-    // Allocate memory for the sphere structure
-    struct s_sphere *test_circle = (struct s_sphere *)malloc(sizeof(struct s_sphere));
-    if (!test_circle) {
-        fprintf(stderr, "Memory allocation failed for test_circle\n");
-        return;
+struct s_vec3 generateRayDirection(int px, int py, float width, float height, float fov)
+{
+    //find normalized device coordinates
+    float normx = (px + 0.5)/width;
+    float normy = (py + 0.5)/height;
+
+    //map to range [-1, 1]
+    float NDCx = 2 * normx - 1;
+    float NDCy = 1 - 2 * normy;
+
+    //computing scale
+    float scale = tanf((fov/2) * (PI/180));
+
+    //find ray direction
+    float ray_directionx = NDCx * scale;
+    float ray_directiony = NDCy * scale;
+    float ray_directionz = -1;
+
+    //length of ray direction
+    float length = powf(pow(ray_directionx, 2) + pow(ray_directiony, 2) +pow(ray_directionz, 2) ,0.5);
+    
+    //normalise ray direction;
+    ray_directionx = ray_directionx / length;
+    ray_directiony = ray_directiony / length;
+    ray_directionz = ray_directionz / length;
+
+    return createVec3(ray_directionx, ray_directiony, ray_directionz);
+}
+
+
+struct s_vec3 raytraceSphere(struct s_ray ray, struct s_vec3 lightOrigin) {
+    // Sphere setup (as before)
+    struct s_sphere *sphereObj = (struct s_sphere*)malloc(sizeof(struct s_sphere));
+    sphereObj->origin = (struct s_vec3 *)malloc(sizeof(struct s_vec3));
+    sphereObj->origin->x = width / 2;
+    sphereObj->origin->y = height / 2;
+    sphereObj->origin->z = 0;
+    sphereObj->radius = 10.f;
+
+    float t_value = intersectRaySphere(ray, *sphereObj);
+    if (t_value < 0) {
+        // No intersection, return background color
+        struct s_vec3 black = {0.0, 0.0, 0.0};
+        return black;  // Black or other background color
     }
 
-    // Allocate memory for the sphere origin
-    test_circle->origin = (struct s_vec3 *)malloc(sizeof(struct s_vec3));
-    if (!test_circle->origin) {
-        fprintf(stderr, "Memory allocation failed for test_circle->origin\n");
-        free(test_circle);  // Clean up previously allocated memory
-        return;
-    }
+    struct s_vec3 intersectPoint = rayAt(ray, t_value);
 
-    // Initialize sphere parameters
-    test_circle->origin->x = 100;
-    test_circle->origin->y = 100;
-    test_circle->origin->z = 0;
-    test_circle->radius = 50.f;
+    // Compute normal and lighting (as before)
+    struct s_vec3 pointMinusOrigin = vec3_sub(intersectPoint, *(sphereObj->origin));
+    struct s_vec3 normalAtIntersectPoint = vec3_normalize(pointMinusOrigin);
+    
+    struct s_vec3 lightDir = vec3_normalize(vec3_sub(lightOrigin, intersectPoint));
+    
+    // Ambient, diffuse, and specular calculations (as before)    
+    struct s_vec3 Iambient = scalarMult(createVec3(0.5f, 0.3f, 0.3f), 0.5);
+    struct s_vec3 Idiffuse = scalarMult(scalarMult(createVec3(1.0f, 1.0f, 1.0f), 0.5), maxft(dot(normalAtIntersectPoint, lightDir), 0));
+    
+    struct s_vec3 R = vec3_sub(scalarMult(normalAtIntersectPoint, 2 * dot(normalAtIntersectPoint, lightDir)), lightDir);
+    struct s_vec3 viewDirection = vec3_normalize(vec3_sub(*ray.origin, intersectPoint));
+    struct s_vec3 Ispecular = scalarMult(scalarMult(createVec3(1.0f, 1.0f, 1.0f), 0.5), pow(maxft(dot(R, viewDirection), 0), 150));
 
-    printf("success test_circle data set up\n");
-
-    // Draw the filled circle
-    drawFilledCircle(test_circle->origin->x, test_circle->origin->y, test_circle->radius, img);
-
-    // Free allocated memory
-    free(test_circle->origin);
-    free(test_circle);
+    struct s_vec3 I = vec3_add(vec3_add(Iambient, Idiffuse), Ispecular);
+    return I;
 }
