@@ -8,8 +8,12 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-float height = 768; // Window height
-float width = 1366; // Window width
+typedef struct s_vec3
+{
+    float x;
+    float y;
+    float z;
+} t_vec3;
 
 // Structure to hold image data
 typedef struct s_data
@@ -30,38 +34,51 @@ typedef struct s_vars
 
 typedef struct s_ray
 {
-    struct s_vec3 *origin;
-    struct s_vec3 *direction;
+    t_vec3 *origin;
+    t_vec3 *direction;
 } t_ray;
 
-typedef struct s_vec3
-{
-    float x;
-    float y;
-    float z;
-} t_vec3;
+
 
 typedef struct s_sphere
 {
-    struct s_vec3 *origin;
+    t_vec3 *origin;
     float radius;
 } t_sphere;
+
+typedef struct s_scene
+{
+    t_ray * camera;
+    t_ray * light;
+    float fov;
+    float width;
+    float height;
+    t_sphere *sphere;
+    t_data *data;
+    t_vars *vars;
+}   t_scene;
 
 // Function prototypes
 
 /*-------------------------------main.c---------------------------------------------------------*/
-int key_hook(int keycode, t_vars *vars);
+int key_hook(int keycode, t_scene *scene);
 void my_mlx_pixel_put(t_data *data, int x, int y, int color);
-void initialize_mlx(t_vars *vars, t_data *img, float width, float height);
+void initialize_mlx(t_vars **vars, t_data **img, float width, float height);
 void draw_example(t_data *img);
-void initalise_data(t_vars *vars, t_data *img, float width, float height);
+void initalise_data(t_vars **vars, t_data **img, float width, float height);
+//void initalise_scene(t_scene *sceneObj, float height, float width);
+void updateScene(t_scene *sceneObj);
+void clear_screen_to_black(t_scene *sceneObj);
 
 /*-------------------------------sphere.c--------------------------------------------------------*/
-uint32_t rgbaToHex(struct s_vec3 color);
-void renderScene(t_data *img);
-struct s_vec3 generateRayDirection(int px, int py, float width, float height, float fov);
-struct s_vec3 raytraceSphere(struct s_ray ray, struct s_vec3 lightOrigin);
-uint32_t rgbaToHex(struct s_vec3 color);
+uint32_t rgbaToHex(t_vec3 color);
+void renderScene(t_data *img, t_scene *sceneObj);
+t_vec3 generateRayDirection(int x, int y, t_scene *scene);
+t_vec3 raytraceSphere(t_ray ray, t_scene sceneObj);
+uint32_t rgbaToHex(t_vec3 color);
+t_vec3 computeSphereObjNormal(t_vec3 intersectionPoint, t_sphere sphere);
+t_vec3 computeSphereNormal(t_vec3 intersection, t_sphere sphere);
+int raySphereIntersect(t_ray *ray, t_sphere *sphere, float *t);
 
 /*-------------------------------generic_sphere.c--------------------------------------------------------*/
 void plotHorizontalLine(int x1, int x2, int y, t_data *img);

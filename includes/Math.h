@@ -7,21 +7,23 @@
 
 #define PI 3.14159265
 
-struct s_vec3 vec3_sub(struct s_vec3 lhs, struct s_vec3 rhs);
-struct s_vec3 vec3_add(struct s_vec3 lhs, struct s_vec3 rhs);
-float dot(struct s_vec3  a, struct s_vec3  b);
-struct s_vec3 vec3_normalize(struct s_vec3 v);
-float intersectRaySphere(struct s_ray ray, struct s_sphere sphere);
-struct s_vec3 computeNormalSphere(struct s_vec3 intersectionPoint, struct s_sphere sphere);
-float vec3_magnitude(struct s_vec3 a);
-struct s_vec3 scalarMult(struct s_vec3 v, float k);
-struct s_vec3 rayAt(struct s_ray ray, float t);
+t_vec3 vec3_sub(t_vec3 lhs, t_vec3 rhs);
+t_vec3 vec3_add(t_vec3 lhs, t_vec3 rhs);
+float dot(t_vec3  a, t_vec3  b);
+t_vec3 vec3_normalize(t_vec3 v);
+float intersectRaySphere(t_ray ray, t_sphere sphere);
+t_vec3 computeNormalSphere(t_vec3 intersectionPoint, t_sphere sphere);
+float vec3_magnitude(t_vec3 a);
+t_vec3 scalarMult(t_vec3 v, float k);
+t_vec3 rayAt(t_ray ray, float t);
 
-struct s_vec3 scalarAdd(struct s_vec3 v, float k);
+t_vec3 scalarAdd(t_vec3 v, float k);
 float maxft(float a, float b);
 float minft(float a, float b);
-struct s_vec3 createVec3(float x, float y, float z);
+t_vec3 createVec3(float x, float y, float z);
+float find_smaller_positive_float(float a, float b);
 
+void printVec3(char *string, t_vec3 vector);
 
 
 #endif

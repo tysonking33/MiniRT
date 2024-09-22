@@ -1,16 +1,16 @@
 #include "../includes/Math.h"
 
-struct s_vec3 vec3_sub(struct s_vec3 lhs, struct s_vec3 rhs)
+t_vec3 vec3_sub(t_vec3 lhs, t_vec3 rhs)
 {
-    struct s_vec3 result = {lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z};
+    t_vec3 result = {lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z};
     return result;
 }
-struct s_vec3 vec3_add(struct s_vec3 lhs, struct s_vec3 rhs)
+t_vec3 vec3_add(t_vec3 lhs, t_vec3 rhs)
 {
-    struct s_vec3 result = {lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z};
+    t_vec3 result = {lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z};
     return result;
 }
-struct s_vec3 scalarMult(struct s_vec3 v, float k)
+t_vec3 scalarMult(t_vec3 v, float k)
 {
     v.x *= k;
     v.y *= k;
@@ -18,7 +18,7 @@ struct s_vec3 scalarMult(struct s_vec3 v, float k)
     return v;
 }
 
-struct s_vec3 scalarAdd(struct s_vec3 v, float k)
+t_vec3 scalarAdd(t_vec3 v, float k)
 {
     v.x += k;
     v.y += k;
@@ -26,20 +26,20 @@ struct s_vec3 scalarAdd(struct s_vec3 v, float k)
     return v;
 }
 
-float dot(struct s_vec3 a, struct s_vec3 b)
+float dot(t_vec3 a, t_vec3 b)
 {
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-float vec3_magnitude(struct s_vec3 a)
+float vec3_magnitude(t_vec3 a)
 {
     return sqrt(pow(a.x, 2) + pow(a.y, 2) + pow(a.z, 2));
 }
 
-struct s_vec3 vec3_normalize(struct s_vec3 v)
+t_vec3 vec3_normalize(t_vec3 v)
 {
     float magnitude = vec3_magnitude(v);
-    struct s_vec3 result = {0.f, 0.f, 0.f};
+    t_vec3 result = {0.f, 0.f, 0.f};
     if (magnitude != 0)
     {
         result.x = v.x / magnitude;
@@ -48,41 +48,59 @@ struct s_vec3 vec3_normalize(struct s_vec3 v)
     }
     else
     {
-        printf("(normalize): divided by 0\n");
+        //printf("(normalize): divided by 0\n");
     }
     return result;
 }
 
-float intersectRaySphere(struct s_ray ray, struct s_sphere sphere)
-{
-    struct s_vec3 L = vec3_sub(*(ray.origin), *(sphere.origin));
-    float a = dot(*(ray.origin), *(ray.direction));
-    float b = 2 * (dot(L, *(ray.direction)));
-    float c = (dot(L, L)) - pow(sphere.radius, 2);
-    float discrim = pow(b, 2) - 4 * a * c;
+float intersectRaySphere(t_ray ray, t_sphere sphere) {
+    // Vector from ray origin to the center of the sphere
+    t_vec3 L = vec3_sub(*(ray.origin), *(sphere.origin));
 
-    /*if (discrim > 0)
-    {
-        printf("2 intersection points, ray passed through sphere\n");
+    // Coefficients of the quadratic equation
+    float a = dot(*(ray.direction), *(ray.direction));      // a = dot(D, D)
+    float b = 2.0f * dot(L, *(ray.direction));              // b = 2 * dot(L, D)
+    float c = dot(L, L) - powf(sphere.radius, 2);           // c = dot(L, L) - r^2
+
+    // Discriminant of the quadratic equation
+    float discriminant = powf(b, 2) - 4 * a * c;
+
+    // If discriminant is negative, there's no real solution (no intersection)
+    if (discriminant < 0) {
+        return -1.0f;
     }
-    else if (discrim == 0)
-    {
-        printf("1 intersection point, ray is tangent to sphere\n");
+
+    // Calculate the two solutions (t0 and t1 are the distances along the ray)
+    float sqrtDiscriminant = sqrtf(discriminant);
+    float t0 = (-b - sqrtDiscriminant) / (2 * a);
+    float t1 = (-b + sqrtDiscriminant) / (2 * a);
+
+    //printf("a: %f, b: %f, c: %f, discriminant: %f\n", a, b, c, discriminant);
+
+    return sqrtDiscriminant;
+
+    
+    // We want the closest positive t value (smallest t > 0)
+    if (t0 > 0 && t1 > 0) {
+        return (t0 < t1) ? t0 : t1;  // Return the smaller positive t
+    } else if (t0 > 0) {
+        return t0;  // t0 is the only positive intersection
+    } else if (t1 > 0) {
+        return t1;  // t1 is the only positive intersection
+    } else {
+        return -1.0f;  // Both t0 and t1 are negative, so the intersection is behind the camera
     }
-    else
-    {
-        printf("No intersection");
-    }*/
-    return discrim;
 }
 
-struct s_vec3 computeNormalSphere(struct s_vec3 intersectionPoint, struct s_sphere sphere)
+
+
+t_vec3 computeNormalSphere(t_vec3 intersectionPoint, t_sphere sphere)
 {
-    struct s_vec3 sphereNormal = {intersectionPoint.x - sphere.origin->x, intersectionPoint.y - sphere.origin->y, intersectionPoint.z - sphere.origin->z};
+    t_vec3 sphereNormal = {intersectionPoint.x - sphere.origin->x, intersectionPoint.y - sphere.origin->y, intersectionPoint.z - sphere.origin->z};
     return scalarMult(sphereNormal, sphere.radius);
 }
 
-struct s_vec3 rayAt(struct s_ray ray, float t)
+t_vec3 rayAt(t_ray ray, float t)
 {
     return vec3_add(*(ray.origin), scalarMult(*(ray.direction), t));
 }
@@ -105,10 +123,30 @@ float minft(float a, float b)
     return b;
 }
 
-struct s_vec3 createVec3(float x, float y, float z)
+t_vec3 createVec3(float x, float y, float z)
 {
-    struct s_vec3 result = {x, y, z};
+    t_vec3 result = {x, y, z};
 
     return result;
 
+}
+
+float find_smaller_positive_float(float a, float b) {
+    // Check both floats and find the smaller one that is greater than 0
+    if (a > 0 && b > 0) {
+        return (a < b) ? a : b;
+    } else if (a > 0) {
+        return a;
+    } else if (b > 0) {
+        return b;
+    } else {
+        return 0; // Return 0 if neither float is positive
+    }
+}
+
+
+
+void printVec3(char *string, t_vec3 vector)
+{
+    printf("%s: x:%f, y:%f, z:%f", string, vector.x, vector.y, vector.z);
 }

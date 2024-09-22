@@ -12,7 +12,7 @@
 
 NAME = miniRT
 CC = gcc
-FLAGS = -Wall -Wextra -Werror -g
+FLAGS = -Wall -Wextra -g
 RM = rm -f
 LINKS = -I./includes -L./libft -lft -L./mlx_linux -lmlx_Linux -L/usr/lib -lX11 -lXext -lXrandr -lXinerama -lXcursor -lm -lGL -lz
 
