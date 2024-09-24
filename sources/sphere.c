@@ -111,9 +111,6 @@ t_vec3 raytraceSphere(struct s_ray ray, t_scene sceneObj)
 }
 
 
-
-
-
 // Computes the normal of the sphere at a given intersection point
 t_vec3 computeSphereNormal(t_vec3 intersection, t_sphere sphere)
 {

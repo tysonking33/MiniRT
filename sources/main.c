@@ -16,7 +16,7 @@
 // Add these to your t_scene structure or wherever appropriate
 float yaw = 0.0f; // Rotation around the Y-axis
 float pitch = 0.0f; // Rotation around the X-axis
-float ROTATION_SPEED =-1.0f;
+float ROTATION_SPEED =-10.0f;
 float move_scale = 10.0f;
 
 int key_hook(int keycode, t_scene *scene)
@@ -34,27 +34,27 @@ int key_hook(int keycode, t_scene *scene)
         exit(EXIT_SUCCESS);
     }
 
-    // Forward (W) and Backward (S) movement
-    if (keycode == KEY_W) 
+    // Left (A) and Right (D) strafe movement
+    if (keycode == KEY_D) 
     {
         scene->camera->origin->x += move_scale * cos(yaw_radians) * cos(pitch_radians);
         scene->camera->origin->z += move_scale * sin(yaw_radians) * cos(pitch_radians);
         scene->camera->origin->y += move_scale * sin(pitch_radians);
     }
-    else if (keycode == KEY_S) 
+    else if (keycode == KEY_A) 
     {
         scene->camera->origin->x -= move_scale * cos(yaw_radians) * cos(pitch_radians);
         scene->camera->origin->z -= move_scale * sin(yaw_radians) * cos(pitch_radians);
         scene->camera->origin->y -= move_scale * sin(pitch_radians);
     }
 
-    // Left (A) and Right (D) strafing movement
-    if (keycode == KEY_A) 
+    // Forward (W) and Backwards (S) movement
+    if (keycode == KEY_S) 
     {
         scene->camera->origin->x -= move_scale * cos(yaw_radians + PI / 2);
         scene->camera->origin->z -= move_scale * sin(yaw_radians + PI / 2);
     }
-    else if (keycode == KEY_D) 
+    else if (keycode == KEY_W) 
     {
         scene->camera->origin->x += move_scale * cos(yaw_radians + PI / 2);
         scene->camera->origin->z += move_scale * sin(yaw_radians + PI / 2);
@@ -97,6 +97,9 @@ int key_hook(int keycode, t_scene *scene)
     // Print updated camera position, yaw, and pitch
     printf("Updated Camera Position: (%f, %f, %f)\n", scene->camera->origin->x, scene->camera->origin->y, scene->camera->origin->z);
     printf("Updated Yaw: %f, Pitch: %f\n", yaw, pitch);
+    renderScene(scene->data, scene); // Render the scene
+    //clear_screen_to_black(sceneObj);
+    mlx_put_image_to_window(scene->vars->mlx, scene->vars->win, scene->data->img, 0, 0); // Put image to window
 
     return 0;
 }
