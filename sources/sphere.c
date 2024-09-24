@@ -26,6 +26,7 @@ void renderScene(t_data *img, t_scene *scene)
 {
     int width = 1366;
     int height = 768;
+    float aspect_ratio = (float)width / (float)height;
     t_ray ray;
     ray.origin = scene->camera->origin;
     t_vec3 direction;  // Use a regular vector for direction
@@ -36,27 +37,37 @@ void renderScene(t_data *img, t_scene *scene)
         for (int x = 0; x < width; x++)
         {
             // Calculate the ray direction for each pixel
-            float u = (float)x / (float)(width);
-            float v = (float)y / (float)(height);
-            direction = vec3_normalize(createVec3(u - 0.5f, v - 0.5f, -1.0f));
+
+            // Normalize coordinates to NDC (Normalized Device Coordinates)
+            float u = (2.0f * ((float)x + 0.5f) / (float)width - 1.0f) * aspect_ratio;
+            float v = 1.0f - 2.0f * ((float)y + 0.5f) / (float)height;
+
+            // Adjust for FOV (assuming vertical FOV, adjust the ray's angle)
+            float fov_adjustment = tan(scene->fov * (PI / 180.0f) / 2.0f);
+            direction = vec3_normalize(createVec3(u * fov_adjustment, v * fov_adjustment, -1.0f));
+
             ray.direction = malloc(sizeof(t_vec3));
             *ray.direction = direction;  // Assign the direction vector to ray
 
             // Check for sphere intersection
             if (raySphereIntersect(&ray, scene->sphere, &t))
             {
-
+                // If the ray hits the sphere, compute the color using ray tracing
                 t_vec3 color = raytraceSphere(ray, *scene);
                 uint32_t hexColor = rgbaToHex(color);
                 my_mlx_pixel_put(img, x, y, hexColor);
             }
             else
             {
-                my_mlx_pixel_put(img, x, y, 0x000000); // Set background color (black)
+                // If no hit, set background color (black)
+                my_mlx_pixel_put(img, x, y, 0x000000);
             }
+
+            free(ray.direction);  // Clean up dynamically allocated memory
         }
     }
 }
+
 
 
 t_vec3 generateRayDirection(int x, int y, t_scene *scene) {

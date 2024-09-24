@@ -17,7 +17,7 @@
 float yaw = 0.0f; // Rotation around the Y-axis
 float pitch = 0.0f; // Rotation around the X-axis
 float ROTATION_SPEED =-10.0f;
-float move_scale = 10.0f;
+float move_scale = 5.0f;
 
 int key_hook(int keycode, t_scene *scene)
 {
