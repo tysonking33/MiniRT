@@ -174,10 +174,15 @@ void initialize_mlx(t_vars **vars, t_data **img, float width, float height)
 
 void initialize_scene_elements(t_scene *scene)
 {
+    int num_spheres = 2;
     // Allocate memory for camera, light, and sphere
     scene->camera = (t_ray *)malloc(sizeof(t_ray));
     scene->light = (t_ray *)malloc(sizeof(t_ray));
-    scene->sphere = (t_sphere *)malloc(sizeof(t_sphere)); 
+    scene->sphere = (t_sphere *)malloc(num_spheres * sizeof(t_sphere)); 
+    for (int i = 0; i < num_spheres; i++)
+    {
+        scene->sphere->origin = (t_vec3 *)malloc(sizeof(t_vec3));
+    }
 
     if (!scene->camera || !scene->light || !scene->sphere) {
         fprintf(stderr, "Camera/Light/Sphere Memory allocation failed\n");
@@ -206,15 +211,31 @@ void initialize_scene_elements(t_scene *scene)
     scene->camera->direction->x = 0.0f;
     scene->camera->direction->y = 0.0f;
     scene->camera->direction->z = 1.0f; 
-    *(scene->sphere->origin) = createVec3(0, 0, 0); 
-    scene->sphere->radius = 10.0f;
+
+    t_sphere *sphere0 = (t_sphere*)malloc(sizeof(t_sphere));
+    sphere0->origin = (t_vec3 *)malloc(sizeof(t_vec3));
+    *(sphere0->origin) = createVec3(0, 0, 0); 
+    sphere0->radius = 10.0f; 
+
+    t_sphere *sphere1 = (t_sphere *)malloc(sizeof(t_sphere));
+    sphere1->origin = (t_vec3 *)malloc(sizeof(t_vec3));
+    *(sphere1->origin) = createVec3(20, 0, 0); 
+    sphere1->radius = 10.0f; 
+
+    scene->sphere[0] = *sphere0;
+    scene->sphere[1] = *sphere1;
+    scene->num_spheres = num_spheres;
+    
     
     scene->light->origin->x = 0.0f;
     scene->light->origin->y = 5.0f; 
     scene->light->origin->z = -20.0f;
     scene->fov = 90.0f;
 
-    // Initialize other values as needed
+    //free(sphere1->origin);
+    //free(sphere1);
+    //free(sphere2->origin);
+    //free(sphere2);
 }
 
 void clear_screen_to_black(t_scene *sceneObj) {
@@ -266,7 +287,6 @@ int main(void)
     initialize_scene_elements(sceneObj);
 
     renderScene(sceneObj->data, sceneObj); // Render the scene
-    //clear_screen_to_black(sceneObj);
     mlx_put_image_to_window(sceneObj->vars->mlx, sceneObj->vars->win, sceneObj->data->img, 0, 0); // Put image to window
 
     mlx_key_hook(sceneObj->vars->win, key_hook, sceneObj); // Set up the key event handler

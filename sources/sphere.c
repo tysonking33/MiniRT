@@ -8,7 +8,7 @@ uint32_t rgbaToHex(t_vec3 color)
     uint8_t r = (uint8_t)(color.x * 255);
     uint8_t g = (uint8_t)(color.y * 255);
     uint8_t b = (uint8_t)(color.z * 255);
-    uint8_t a = 255; // Alpha should be just 255, not 255 * 255
+    uint8_t a = 255;
 
     // Combine the components into a single 32-bit hexadecimal color
     uint32_t hexColor = (a << 24) | (r << 16) | (g << 8) | b;
@@ -30,7 +30,9 @@ void renderScene(t_data *img, t_scene *scene)
     t_ray ray;
     ray.origin = scene->camera->origin;
     t_vec3 direction;  // Use a regular vector for direction
-    float t;
+    float t = 0.0f;
+    float closest_t = 0.0f;
+    t_sphere *closest_sphere;
 
     for (int y = 0; y < height; y++)
     {
@@ -49,18 +51,35 @@ void renderScene(t_data *img, t_scene *scene)
             ray.direction = malloc(sizeof(t_vec3));
             *ray.direction = direction;  // Assign the direction vector to ray
 
+            closest_sphere = NULL;
+            closest_t = FLT_MAX;
+            t = FLT_MAX;
+
             // Check for sphere intersection
-            if (raySphereIntersect(&ray, scene->sphere, &t))
+            for (int i = 0; i < scene->num_spheres; i++)
+            {
+                t_sphere *current_sphere = &(scene->sphere[i]);
+
+                raySphereIntersect(&ray, current_sphere, &t);
+                if (t < closest_t)
+                {
+                    closest_t = t;
+                    closest_sphere = current_sphere;
+                }
+            }
+            
+            if (closest_sphere != NULL)
             {
                 // If the ray hits the sphere, compute the color using ray tracing
-                t_vec3 color = raytraceSphere(ray, *scene);
+                //t_vec3 color = raytraceSphere(ray, *scene);
+                t_vec3 color = raytraceSphere(ray, *closest_sphere, scene->light);
                 uint32_t hexColor = rgbaToHex(color);
                 my_mlx_pixel_put(img, x, y, hexColor);
             }
             else
             {
-                // If no hit, set background color (black)
-                my_mlx_pixel_put(img, x, y, 0x000000);
+                // If no hit, set background color (RED)
+                my_mlx_pixel_put(img, x, y, RED);
             }
 
             free(ray.direction);  // Clean up dynamically allocated memory
@@ -81,10 +100,9 @@ t_vec3 generateRayDirection(int x, int y, t_scene *scene) {
     return rayDirection;
 }
 
-t_vec3 raytraceSphere(struct s_ray ray, t_scene sceneObj)
+t_vec3 raytraceSphere(struct s_ray ray, t_sphere sphereObj, t_ray *lightObj)
 {
-    t_vec3 lightOrigin = *sceneObj.light->origin;
-    t_sphere sphereObj = *sceneObj.sphere;
+    t_vec3 *lightOrigin = lightObj->origin;
 
     // Find the intersection of the ray with the sphere
     float t_value = intersectRaySphere(ray, sphereObj);
@@ -92,7 +110,7 @@ t_vec3 raytraceSphere(struct s_ray ray, t_scene sceneObj)
     {
         // No intersection, return background color
         t_vec3 sky_blue = {0.529, 0.808, 0.922};
-        return sky_blue; // Black or other background color
+        return sky_blue;
     }
 
     // Calculate the intersection point on the sphere
@@ -101,10 +119,10 @@ t_vec3 raytraceSphere(struct s_ray ray, t_scene sceneObj)
     // **Call computeSphereObjNormal here**
     t_vec3 normalAtIntersectPoint = computeSphereObjNormal(intersectPoint, sphereObj);
 
-    // Compute lighting (as before)
-    t_vec3 lightDir = vec3_normalize(vec3_sub(lightOrigin, intersectPoint));
+    // Compute lighting
+    t_vec3 lightDir = vec3_normalize(vec3_sub(*lightOrigin, intersectPoint));
 
-    // Ambient, diffuse, and specular lighting calculations (as before)
+    // Ambient, diffuse, and specular lighting calculations
     t_vec3 Iambient = scalarMult(createVec3(0.5f, 0.3f, 0.3f), 0.5);
     t_vec3 Idiffuse = scalarMult(scalarMult(createVec3(1.0f, 1.0f, 1.0f), 0.5), maxft(dot(normalAtIntersectPoint, lightDir), 0));
 
@@ -114,7 +132,6 @@ t_vec3 raytraceSphere(struct s_ray ray, t_scene sceneObj)
 
     // Combine the lighting components
     t_vec3 I = vec3_add(vec3_add(Iambient, Idiffuse), Ispecular);
-
 
     //free(sphereObj.origin);
 

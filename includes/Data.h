@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <float.h>
 
 typedef struct s_vec3
 {
@@ -54,6 +55,7 @@ typedef struct s_scene
     float width;
     float height;
     t_sphere *sphere;
+    int num_spheres;
     t_data *data;
     t_vars *vars;
 }   t_scene;
@@ -74,11 +76,12 @@ void clear_screen_to_black(t_scene *sceneObj);
 uint32_t rgbaToHex(t_vec3 color);
 void renderScene(t_data *img, t_scene *sceneObj);
 t_vec3 generateRayDirection(int x, int y, t_scene *scene);
-t_vec3 raytraceSphere(t_ray ray, t_scene sceneObj);
+t_vec3 raytraceSphere(struct s_ray ray, t_sphere sphereObj, t_ray *lightObj);
 uint32_t rgbaToHex(t_vec3 color);
 t_vec3 computeSphereObjNormal(t_vec3 intersectionPoint, t_sphere sphere);
 t_vec3 computeSphereNormal(t_vec3 intersection, t_sphere sphere);
 int raySphereIntersect(t_ray *ray, t_sphere *sphere, float *t);
+
 
 /*-------------------------------generic_sphere.c--------------------------------------------------------*/
 void plotHorizontalLine(int x1, int x2, int y, t_data *img);
