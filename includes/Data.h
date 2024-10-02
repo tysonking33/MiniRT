@@ -47,6 +47,25 @@ typedef struct s_sphere
     float radius;
 } t_sphere;
 
+
+typedef struct s_plane
+{
+    t_vec3 *origin;
+    t_vec3 *normal;
+
+    /*------------plane corners------------------*/
+    t_vec3 *P1;             
+    t_vec3 *P2;
+    t_vec3 *P3;
+    t_vec3 *P4;
+
+    /*---------------properties----------------------------*/
+
+    t_vec3 *base_color;
+    float height;
+    float width;
+}   t_plane;
+
 typedef struct s_scene
 {
     t_ray * camera;
@@ -58,6 +77,8 @@ typedef struct s_scene
     int num_spheres;
     t_data *data;
     t_vars *vars;
+    t_plane *plane;
+    int num_planes;
 }   t_scene;
 
 // Function prototypes
@@ -68,13 +89,14 @@ void my_mlx_pixel_put(t_data *data, int x, int y, int color);
 void initialize_mlx(t_vars **vars, t_data **img, float width, float height);
 void draw_example(t_data *img);
 void initalise_data(t_vars **vars, t_data **img, float width, float height);
-//void initalise_scene(t_scene *sceneObj, float height, float width);
 void updateScene(t_scene *sceneObj);
 void clear_screen_to_black(t_scene *sceneObj);
+void crossProduct(t_vec3 *a, t_vec3 *b, t_vec3 *result);
+void normalise(t_vec3 *result);
 
 /*-------------------------------sphere.c--------------------------------------------------------*/
 uint32_t rgbaToHex(t_vec3 color);
-void renderScene(t_data *img, t_scene *sceneObj);
+void renderSceneSphere(t_data *img, t_scene *sceneObj);
 t_vec3 generateRayDirection(int x, int y, t_scene *scene);
 t_vec3 raytraceSphere(struct s_ray ray, t_sphere sphereObj, t_ray *lightObj);
 uint32_t rgbaToHex(t_vec3 color);
@@ -87,5 +109,15 @@ int raySphereIntersect(t_ray *ray, t_sphere *sphere, float *t);
 void plotHorizontalLine(int x1, int x2, int y, t_data *img);
 void drawFilledCircle(int xc, int yc, int r, t_data *img);
 void drawSphere(t_data *img);
+
+
+/*-------------------------------plane.c--------------------------------------------------------*/
+void renderScenePlane(t_data *img, t_scene *scene);
+int rayPlaneIntersect(t_ray *ray, t_plane *plane, float *t);
+int checkIfBounded(t_ray *ray, t_plane *plane, float t);
+t_vec3 raytracePlane(t_ray ray, t_plane plane, t_ray *lightObj, t_scene sceneObj, t_vec3 intersectionPoint);
+t_vec3 vec3_mult(t_vec3 v1, t_vec3 v2);
+t_vec3 calculateShadow(t_ray ray, t_plane plane, t_ray *lightObj, t_scene sceneObj, t_vec3 intersectionPoint);
+
 
 #endif

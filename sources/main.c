@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: tytang <marvin@42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/21 13:06:10 by tytang            #+#    #+#             */
-/*   Updated: 2022/11/28 12:26:52 by tytang           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../includes/Data.h"
 #include "../includes/Math.h"
 
@@ -97,13 +85,13 @@ int key_hook(int keycode, t_scene *scene)
     // Print updated camera position, yaw, and pitch
     printf("Updated Camera Position: (%f, %f, %f)\n", scene->camera->origin->x, scene->camera->origin->y, scene->camera->origin->z);
     printf("Updated Yaw: %f, Pitch: %f\n", yaw, pitch);
-    renderScene(scene->data, scene); // Render the scene
-    //clear_screen_to_black(sceneObj);
+    //renderSceneSphere(scene->data, scene); // Render the scene
+    renderScenePlane(scene->data, scene);
+
     mlx_put_image_to_window(scene->vars->mlx, scene->vars->win, scene->data->img, 0, 0); // Put image to window
 
     return 0;
 }
-
 
 // Puts a pixel of a given color at (x, y) in the image
 void my_mlx_pixel_put(t_data *data, int x, int y, int color)
@@ -119,16 +107,6 @@ void initalise_data(t_vars **vars, t_data **img, float width, float height)
 {
     (*img)->img = mlx_new_image((*vars)->mlx, width, height);
     (*img)->addr = mlx_get_data_addr((*img)->img, &(*img)->bits_per_pixel, &(*img)->line_length, &(*img)->endian);
-}
-
-// Draws a simple example pattern on the image
-void draw_example(t_data *img)
-{
-    // Draw a 2x2 red square
-    my_mlx_pixel_put(img, 5, 5, RED);
-    my_mlx_pixel_put(img, 15, 15, RED);
-    my_mlx_pixel_put(img, 5, 15, RED);
-    my_mlx_pixel_put(img, 15, 5, RED);
 }
 
 // Initializes the scene and allocates memory
@@ -171,7 +149,6 @@ void initialize_mlx(t_vars **vars, t_data **img, float width, float height)
     }
 }
 
-
 void initialize_scene_elements(t_scene *scene)
 {
     int num_spheres = 2;
@@ -203,7 +180,6 @@ void initialize_scene_elements(t_scene *scene)
         exit(EXIT_FAILURE);
     }
 
-    // Initialize values (optional)
     scene->camera->origin->x = 0.0f;
     scene->camera->origin->y = 0.0f;
     scene->camera->origin->z = -50.0f; 
@@ -232,37 +208,77 @@ void initialize_scene_elements(t_scene *scene)
     scene->light->origin->z = -20.0f;
     scene->fov = 90.0f;
 
-    //free(sphere1->origin);
-    //free(sphere1);
-    //free(sphere2->origin);
-    //free(sphere2);
+
+
+    scene->num_planes = 1;
+
+    t_plane *plane1 = (t_plane*)malloc(sizeof(t_plane));
+    plane1->origin = (t_vec3*)malloc(sizeof(t_vec3));
+    *plane1->origin = createVec3(0,0,0);
+    plane1->normal = (t_vec3*)malloc(sizeof(t_vec3));
+    plane1->P1 = (t_vec3*)malloc(sizeof(t_vec3));
+    plane1->P2 = (t_vec3*)malloc(sizeof(t_vec3));
+    plane1->P3 = (t_vec3*)malloc(sizeof(t_vec3));
+    plane1->P4 = (t_vec3*)malloc(sizeof(t_vec3));
+    plane1->base_color = (t_vec3*)malloc(sizeof(t_vec3));               //base color is red
+    plane1->base_color->x = 1.0f;
+    plane1->base_color->y = 0.0f;
+    plane1->base_color->z = 0.0f;
+    plane1->height = 10.0f;
+    plane1->width = 10.0f;
+
+    float halfWidth  =plane1->width / 2;
+    float halfHeight  =plane1->height / 2;
+
+    //top left
+    plane1->P1->x = plane1->origin->x - halfWidth;
+    plane1->P1->y = plane1->origin->y + halfHeight;
+    plane1->P1->z = plane1->origin->z;    
+
+    //top right
+    plane1->P2->x = plane1->origin->x + halfWidth;
+    plane1->P2->y = plane1->origin->y + halfHeight;
+    plane1->P2->z = plane1->origin->z;  
+
+    //bottom left
+    plane1->P3->x = plane1->origin->x - halfWidth;
+    plane1->P3->y = plane1->origin->y - halfHeight;
+    plane1->P3->z = plane1->origin->z;    
+
+    //bottom right
+    plane1->P4->x = plane1->origin->x + halfWidth;
+    plane1->P4->y = plane1->origin->y - halfHeight;
+    plane1->P4->z = plane1->origin->z;    
+
+    t_vec3 v1 = vec3_sub(*plane1->P2, *plane1->P1);
+    t_vec3 v2 = vec3_sub(*plane1->P3, *plane1->P1);
+
+    crossProduct(&v1, &v2, plane1->normal);
+    normalise(plane1->normal);
+
+    scene->plane = (t_plane *)malloc(scene->num_planes *sizeof(t_plane));
+    scene->plane[0] = *plane1;
+
+
 }
 
-void clear_screen_to_black(t_scene *sceneObj) {
-    printf("start\n");
-
-    if (sceneObj == NULL || sceneObj->data == NULL || sceneObj->data->img == NULL) {
-        fprintf(stderr, "Scene object or image data is NULL\n");
-        return; // Early return to avoid dereferencing NULL
-    }
-
-    int width = sceneObj->width;
-    int height = sceneObj->height;
-
-    if (width <= 0 || height <= 0) {
-        fprintf(stderr, "Invalid dimensions: width=%d, height=%d\n", width, height);
-        return; // Early return to avoid invalid dimensions
-    }
-    printf("before my_mlx_pixel_put\n");
-
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            my_mlx_pixel_put(sceneObj->data, x, y, BLUE); // Set pixel to black
-        }
-    }
-    printf("success\n");
+void crossProduct(t_vec3 *a, t_vec3 *b, t_vec3 *result)
+{
+    result->x = a->y * b->z - a->z * b->y; 
+    result->y = a->z * b->x - a->x * b->z; 
+    result->z = a->x * b->y - a->y * b->x; 
 }
 
+void normalise(t_vec3 *result)
+{
+    float length = sqrt(result->x * result->x + result->y * result->y + result->z * result->z);
+    if (length != 0.0f)
+    {
+        result->x /= length;
+        result->y /= length;
+        result->z /= length;
+    }
+}
 
 // Main function
 int main(void)
@@ -286,7 +302,9 @@ int main(void)
     // Initialize scene elements (camera, light, sphere)
     initialize_scene_elements(sceneObj);
 
-    renderScene(sceneObj->data, sceneObj); // Render the scene
+    //renderSceneSphere(sceneObj->data, sceneObj); // Render the scene
+    renderScenePlane(sceneObj->data, sceneObj);
+
     mlx_put_image_to_window(sceneObj->vars->mlx, sceneObj->vars->win, sceneObj->data->img, 0, 0); // Put image to window
 
     mlx_key_hook(sceneObj->vars->win, key_hook, sceneObj); // Set up the key event handler

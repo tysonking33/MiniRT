@@ -22,14 +22,14 @@ t_vec3 computeSphereObjNormal(t_vec3 intersectionPoint, struct s_sphere sphere)
 }
 
 // Render the scene by checking ray-sphere intersections
-void renderScene(t_data *img, t_scene *scene)
+void renderSceneSphere(t_data *img, t_scene *scene)
 {
     int width = 1366;
     int height = 768;
     float aspect_ratio = (float)width / (float)height;
     t_ray ray;
     ray.origin = scene->camera->origin;
-    t_vec3 direction;  // Use a regular vector for direction
+    t_vec3 direction; // Use a regular vector for direction
     float t = 0.0f;
     float closest_t = 0.0f;
     t_sphere *closest_sphere;
@@ -49,7 +49,7 @@ void renderScene(t_data *img, t_scene *scene)
             direction = vec3_normalize(createVec3(u * fov_adjustment, v * fov_adjustment, -1.0f));
 
             ray.direction = malloc(sizeof(t_vec3));
-            *ray.direction = direction;  // Assign the direction vector to ray
+            *ray.direction = direction; // Assign the direction vector to ray
 
             closest_sphere = NULL;
             closest_t = FLT_MAX;
@@ -67,11 +67,11 @@ void renderScene(t_data *img, t_scene *scene)
                     closest_sphere = current_sphere;
                 }
             }
-            
+
             if (closest_sphere != NULL)
             {
                 // If the ray hits the sphere, compute the color using ray tracing
-                //t_vec3 color = raytraceSphere(ray, *scene);
+                // t_vec3 color = raytraceSphere(ray, *scene);
                 t_vec3 color = raytraceSphere(ray, *closest_sphere, scene->light);
                 uint32_t hexColor = rgbaToHex(color);
                 my_mlx_pixel_put(img, x, y, hexColor);
@@ -82,20 +82,19 @@ void renderScene(t_data *img, t_scene *scene)
                 my_mlx_pixel_put(img, x, y, RED);
             }
 
-            free(ray.direction);  // Clean up dynamically allocated memory
+            free(ray.direction); // Clean up dynamically allocated memory
         }
     }
 }
 
-
-
-t_vec3 generateRayDirection(int x, int y, t_scene *scene) {
+t_vec3 generateRayDirection(int x, int y, t_scene *scene)
+{
     // Compute normalized screen space coordinates
     float aspectRatio = scene->width / scene->height;
     float px = (2 * ((x + 0.5) / scene->width) - 1) * aspectRatio * tan(scene->fov / 2);
     float py = (1 - 2 * ((y + 0.5) / scene->height)) * tan(scene->fov / 2);
-    
-    t_vec3 rayDirection = {px, py, -1.0f};  // Assuming the camera looks down the negative Z-axis
+
+    t_vec3 rayDirection = {px, py, -1.0f}; // Assuming the camera looks down the negative Z-axis
     rayDirection = vec3_normalize(rayDirection);
     return rayDirection;
 }
@@ -133,11 +132,10 @@ t_vec3 raytraceSphere(struct s_ray ray, t_sphere sphereObj, t_ray *lightObj)
     // Combine the lighting components
     t_vec3 I = vec3_add(vec3_add(Iambient, Idiffuse), Ispecular);
 
-    //free(sphereObj.origin);
+    // free(sphereObj.origin);
 
     return I;
 }
-
 
 // Computes the normal of the sphere at a given intersection point
 t_vec3 computeSphereNormal(t_vec3 intersection, t_sphere sphere)
@@ -147,18 +145,21 @@ t_vec3 computeSphereNormal(t_vec3 intersection, t_sphere sphere)
 }
 
 // Ray-sphere intersection function
-int raySphereIntersect(t_ray *ray, t_sphere *sphere, float *t) {
+int raySphereIntersect(t_ray *ray, t_sphere *sphere, float *t)
+{
     t_vec3 oc = vec3_sub(*ray->origin, *sphere->origin);
     float a = dot(*ray->direction, *ray->direction);
     float b = 2.0 * dot(oc, *ray->direction);
     float c = dot(oc, oc) - sphere->radius * sphere->radius;
     float discriminant = b * b - 4 * a * c;
 
-    if (discriminant < 0) {
+    if (discriminant < 0)
+    {
         return 0; // No intersection
-    } else {
+    }
+    else
+    {
         *t = (-b - sqrt(discriminant)) / (2.0 * a); // Return the closest intersection
-        return 1; // Intersection occurs
+        return 1;                                   // Intersection occurs
     }
 }
-

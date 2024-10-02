@@ -13,6 +13,7 @@
         "stdlib.h": "c",
         "window_keys.h": "c",
         "data.h": "c",
-        "math.h": "c"
+        "math.h": "c",
+        "stdint.h": "c"
     }
 }

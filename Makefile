@@ -21,7 +21,7 @@ SRCS_DIR = sources/
 FILES = main \
 		math \
 		sphere \
-
+		plane	\
 
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(FILES)))
 OBJS = $(SRCS:.c=.o)
