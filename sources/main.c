@@ -2,9 +2,9 @@
 #include "../includes/Math.h"
 
 // Add these to your t_scene structure or wherever appropriate
-float yaw = 0.0f; // Rotation around the Y-axis
+float yaw = 0.0f;   // Rotation around the Y-axis
 float pitch = 0.0f; // Rotation around the X-axis
-float ROTATION_SPEED =-10.0f;
+float ROTATION_SPEED = -10.0f;
 float move_scale = 5.0f;
 
 int key_hook(int keycode, t_scene *scene)
@@ -12,7 +12,7 @@ int key_hook(int keycode, t_scene *scene)
     printf("Keycode: %d\n", keycode);
 
     // Define movement variables
-    float yaw_radians = yaw * PI / 180.0f;   // Convert yaw to radians
+    float yaw_radians = yaw * PI / 180.0f;     // Convert yaw to radians
     float pitch_radians = pitch * PI / 180.0f; // Convert pitch to radians
 
     // Exit on Escape
@@ -23,13 +23,13 @@ int key_hook(int keycode, t_scene *scene)
     }
 
     // Left (A) and Right (D) strafe movement
-    if (keycode == KEY_D) 
+    if (keycode == KEY_D)
     {
         scene->camera->origin->x += move_scale * cos(yaw_radians) * cos(pitch_radians);
         scene->camera->origin->z += move_scale * sin(yaw_radians) * cos(pitch_radians);
         scene->camera->origin->y += move_scale * sin(pitch_radians);
     }
-    else if (keycode == KEY_A) 
+    else if (keycode == KEY_A)
     {
         scene->camera->origin->x -= move_scale * cos(yaw_radians) * cos(pitch_radians);
         scene->camera->origin->z -= move_scale * sin(yaw_radians) * cos(pitch_radians);
@@ -37,12 +37,12 @@ int key_hook(int keycode, t_scene *scene)
     }
 
     // Forward (W) and Backwards (S) movement
-    if (keycode == KEY_S) 
+    if (keycode == KEY_S)
     {
         scene->camera->origin->x -= move_scale * cos(yaw_radians + PI / 2);
         scene->camera->origin->z -= move_scale * sin(yaw_radians + PI / 2);
     }
-    else if (keycode == KEY_W) 
+    else if (keycode == KEY_W)
     {
         scene->camera->origin->x += move_scale * cos(yaw_radians + PI / 2);
         scene->camera->origin->z += move_scale * sin(yaw_radians + PI / 2);
@@ -59,33 +59,37 @@ int key_hook(int keycode, t_scene *scene)
     }
 
     // Camera rotation logic
-    if (keycode == KEY_LEFT_ARROW) 
+    if (keycode == KEY_LEFT_ARROW)
     {
-        yaw -= ROTATION_SPEED;  // Rotate left
-        if (yaw < 0) yaw += 360.0f;  
+        yaw -= ROTATION_SPEED; // Rotate left
+        if (yaw < 0)
+            yaw += 360.0f;
     }
-    else if (keycode == KEY_RIGHT_ARROW) 
+    else if (keycode == KEY_RIGHT_ARROW)
     {
-        yaw += ROTATION_SPEED;  
-        if (yaw > 360.0f) yaw -= 360.0f;
+        yaw += ROTATION_SPEED;
+        if (yaw > 360.0f)
+            yaw -= 360.0f;
     }
 
     // Pitch control (Up and Down)
-    if (keycode == KEY_UP_ARROW) 
+    if (keycode == KEY_UP_ARROW)
     {
-        pitch += ROTATION_SPEED;  
-        if (pitch > 89.0f) pitch = 89.0f;  
+        pitch += ROTATION_SPEED;
+        if (pitch > 89.0f)
+            pitch = 89.0f;
     }
-    else if (keycode == KEY_DOWN_ARROW) 
+    else if (keycode == KEY_DOWN_ARROW)
     {
-        pitch -= ROTATION_SPEED;  
-        if (pitch < -89.0f) pitch = -89.0f;  
+        pitch -= ROTATION_SPEED;
+        if (pitch < -89.0f)
+            pitch = -89.0f;
     }
 
     // Print updated camera position, yaw, and pitch
     printf("Updated Camera Position: (%f, %f, %f)\n", scene->camera->origin->x, scene->camera->origin->y, scene->camera->origin->z);
     printf("Updated Yaw: %f, Pitch: %f\n", yaw, pitch);
-    //renderSceneSphere(scene->data, scene); // Render the scene
+    // renderSceneSphere(scene->data, scene); // Render the scene
     renderScenePlane(scene->data, scene);
 
     mlx_put_image_to_window(scene->vars->mlx, scene->vars->win, scene->data->img, 0, 0); // Put image to window
@@ -113,37 +117,43 @@ void initalise_data(t_vars **vars, t_data **img, float width, float height)
 void initialize_mlx(t_vars **vars, t_data **img, float width, float height)
 {
     *vars = (t_vars *)malloc(sizeof(t_vars));
-    if (*vars == NULL) {
+    if (*vars == NULL)
+    {
         fprintf(stderr, "vars Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
 
     (*vars)->mlx = mlx_init();
-    if ((*vars)->mlx == NULL) {
+    if ((*vars)->mlx == NULL)
+    {
         fprintf(stderr, "vars->mlx Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
 
     (*vars)->win = mlx_new_window((*vars)->mlx, width, height, "Hello world!");
-    if ((*vars)->win == NULL) {
+    if ((*vars)->win == NULL)
+    {
         fprintf(stderr, "vars->win Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
 
     *img = (t_data *)malloc(sizeof(t_data));
-    if (*img == NULL) {
+    if (*img == NULL)
+    {
         fprintf(stderr, "img Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
 
     (*img)->img = mlx_new_image((*vars)->mlx, width, height);
-    if ((*img)->img == NULL) {
+    if ((*img)->img == NULL)
+    {
         fprintf(stderr, "img->img Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
 
     (*img)->addr = mlx_get_data_addr((*img)->img, &(*img)->bits_per_pixel, &(*img)->line_length, &(*img)->endian);
-    if ((*img)->addr == NULL) {
+    if ((*img)->addr == NULL)
+    {
         fprintf(stderr, "img->addr Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
@@ -155,13 +165,14 @@ void initialize_scene_elements(t_scene *scene)
     // Allocate memory for camera, light, and sphere
     scene->camera = (t_ray *)malloc(sizeof(t_ray));
     scene->light = (t_ray *)malloc(sizeof(t_ray));
-    scene->sphere = (t_sphere *)malloc(num_spheres * sizeof(t_sphere)); 
+    scene->sphere = (t_sphere *)malloc(num_spheres * sizeof(t_sphere));
     for (int i = 0; i < num_spheres; i++)
     {
         scene->sphere->origin = (t_vec3 *)malloc(sizeof(t_vec3));
     }
 
-    if (!scene->camera || !scene->light || !scene->sphere) {
+    if (!scene->camera || !scene->light || !scene->sphere)
+    {
         fprintf(stderr, "Camera/Light/Sphere Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
@@ -175,80 +186,78 @@ void initialize_scene_elements(t_scene *scene)
 
     if (!scene->camera->origin || !scene->camera->direction ||
         !scene->light->origin || !scene->light->direction ||
-        !scene->sphere->origin) { // Check for sphere's origin allocation
+        !scene->sphere->origin)
+    { // Check for sphere's origin allocation
         fprintf(stderr, "Ray origin/direction Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
 
     scene->camera->origin->x = 0.0f;
     scene->camera->origin->y = 0.0f;
-    scene->camera->origin->z = -50.0f; 
+    scene->camera->origin->z = -50.0f;
 
     scene->camera->direction->x = 0.0f;
     scene->camera->direction->y = 0.0f;
-    scene->camera->direction->z = 1.0f; 
+    scene->camera->direction->z = 1.0f;
 
-    t_sphere *sphere0 = (t_sphere*)malloc(sizeof(t_sphere));
+    t_sphere *sphere0 = (t_sphere *)malloc(sizeof(t_sphere));
     sphere0->origin = (t_vec3 *)malloc(sizeof(t_vec3));
-    *(sphere0->origin) = createVec3(0, 0, 0); 
-    sphere0->radius = 10.0f; 
+    *(sphere0->origin) = createVec3(0, 0, 0);
+    sphere0->radius = 10.0f;
 
     t_sphere *sphere1 = (t_sphere *)malloc(sizeof(t_sphere));
     sphere1->origin = (t_vec3 *)malloc(sizeof(t_vec3));
-    *(sphere1->origin) = createVec3(20, 0, 0); 
-    sphere1->radius = 10.0f; 
+    *(sphere1->origin) = createVec3(20, 0, 0);
+    sphere1->radius = 10.0f;
 
     scene->sphere[0] = *sphere0;
     scene->sphere[1] = *sphere1;
     scene->num_spheres = num_spheres;
-    
-    
+
     scene->light->origin->x = 0.0f;
-    scene->light->origin->y = 5.0f; 
+    scene->light->origin->y = 5.0f;
     scene->light->origin->z = -20.0f;
     scene->fov = 90.0f;
 
-
-
     scene->num_planes = 1;
 
-    t_plane *plane1 = (t_plane*)malloc(sizeof(t_plane));
-    plane1->origin = (t_vec3*)malloc(sizeof(t_vec3));
-    *plane1->origin = createVec3(0,0,0);
-    plane1->normal = (t_vec3*)malloc(sizeof(t_vec3));
-    plane1->P1 = (t_vec3*)malloc(sizeof(t_vec3));
-    plane1->P2 = (t_vec3*)malloc(sizeof(t_vec3));
-    plane1->P3 = (t_vec3*)malloc(sizeof(t_vec3));
-    plane1->P4 = (t_vec3*)malloc(sizeof(t_vec3));
-    plane1->base_color = (t_vec3*)malloc(sizeof(t_vec3));               //base color is red
+    t_plane *plane1 = (t_plane *)malloc(sizeof(t_plane));
+    plane1->origin = (t_vec3 *)malloc(sizeof(t_vec3));
+    *plane1->origin = createVec3(0, 0, 0);
+    plane1->normal = (t_vec3 *)malloc(sizeof(t_vec3));
+    plane1->P1 = (t_vec3 *)malloc(sizeof(t_vec3));
+    plane1->P2 = (t_vec3 *)malloc(sizeof(t_vec3));
+    plane1->P3 = (t_vec3 *)malloc(sizeof(t_vec3));
+    plane1->P4 = (t_vec3 *)malloc(sizeof(t_vec3));
+    plane1->base_color = (t_vec3 *)malloc(sizeof(t_vec3)); // base color is red
     plane1->base_color->x = 1.0f;
     plane1->base_color->y = 0.0f;
     plane1->base_color->z = 0.0f;
-    plane1->height = 10.0f;
-    plane1->width = 10.0f;
+    plane1->height = 50.0f;
+    plane1->width = 50.0f;
 
-    float halfWidth  =plane1->width / 2;
-    float halfHeight  =plane1->height / 2;
+    float halfWidth = plane1->width / 2;
+    float halfHeight = plane1->height / 2;
 
-    //top left
+    // top left
     plane1->P1->x = plane1->origin->x - halfWidth;
     plane1->P1->y = plane1->origin->y + halfHeight;
-    plane1->P1->z = plane1->origin->z;    
+    plane1->P1->z = plane1->origin->z;
 
-    //top right
+    // top right
     plane1->P2->x = plane1->origin->x + halfWidth;
     plane1->P2->y = plane1->origin->y + halfHeight;
-    plane1->P2->z = plane1->origin->z;  
+    plane1->P2->z = plane1->origin->z;
 
-    //bottom left
+    // bottom left
     plane1->P3->x = plane1->origin->x - halfWidth;
     plane1->P3->y = plane1->origin->y - halfHeight;
-    plane1->P3->z = plane1->origin->z;    
+    plane1->P3->z = plane1->origin->z;
 
-    //bottom right
+    // bottom right
     plane1->P4->x = plane1->origin->x + halfWidth;
     plane1->P4->y = plane1->origin->y - halfHeight;
-    plane1->P4->z = plane1->origin->z;    
+    plane1->P4->z = plane1->origin->z;
 
     t_vec3 v1 = vec3_sub(*plane1->P2, *plane1->P1);
     t_vec3 v2 = vec3_sub(*plane1->P3, *plane1->P1);
@@ -256,17 +265,15 @@ void initialize_scene_elements(t_scene *scene)
     crossProduct(&v1, &v2, plane1->normal);
     normalise(plane1->normal);
 
-    scene->plane = (t_plane *)malloc(scene->num_planes *sizeof(t_plane));
+    scene->plane = (t_plane *)malloc(scene->num_planes * sizeof(t_plane));
     scene->plane[0] = *plane1;
-
-
 }
 
 void crossProduct(t_vec3 *a, t_vec3 *b, t_vec3 *result)
 {
-    result->x = a->y * b->z - a->z * b->y; 
-    result->y = a->z * b->x - a->x * b->z; 
-    result->z = a->x * b->y - a->y * b->x; 
+    result->x = a->y * b->z - a->z * b->y;
+    result->y = a->z * b->x - a->x * b->z;
+    result->z = a->x * b->y - a->y * b->x;
 }
 
 void normalise(t_vec3 *result)
@@ -286,7 +293,8 @@ int main(void)
     float height = 768; // Window height
     float width = 1366; // Window width
     t_scene *sceneObj = (t_scene *)malloc(sizeof(t_scene));
-    if (sceneObj == NULL) {
+    if (sceneObj == NULL)
+    {
         fprintf(stderr, "sceneObj Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
@@ -302,13 +310,13 @@ int main(void)
     // Initialize scene elements (camera, light, sphere)
     initialize_scene_elements(sceneObj);
 
-    //renderSceneSphere(sceneObj->data, sceneObj); // Render the scene
+    // renderSceneSphere(sceneObj->data, sceneObj); // Render the scene
     renderScenePlane(sceneObj->data, sceneObj);
 
     mlx_put_image_to_window(sceneObj->vars->mlx, sceneObj->vars->win, sceneObj->data->img, 0, 0); // Put image to window
 
     mlx_key_hook(sceneObj->vars->win, key_hook, sceneObj); // Set up the key event handler
-    mlx_loop(sceneObj->vars->mlx); // Enter the MLX event loop
+    mlx_loop(sceneObj->vars->mlx);                         // Enter the MLX event loop
 
     // Free allocated memory
     free(sceneObj->camera->origin);

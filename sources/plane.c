@@ -133,9 +133,9 @@ int checkIfBounded(t_ray *ray, t_plane *plane, float t)
     }
 
     // triangle2 = A,C,D
-    t_vec3 v10 = vec3_sub(*C, *A);
-    t_vec3 v11 = vec3_sub(*D, *A);
-    t_vec3 v12 = vec3_sub(*P, *A);
+    t_vec3 v10 = vec3_sub(*C, *D);
+    t_vec3 v11 = vec3_sub(*B, *D);
+    t_vec3 v12 = vec3_sub(*P, *D);
 
     d00 = dot(v10, v10);
     d01 = dot(v10, v11);
@@ -167,7 +167,7 @@ t_vec3 raytracePlane(t_ray ray, t_plane plane, t_ray *lightObj, t_scene sceneObj
         
     // Define colors
     t_vec3 lightColor = {1.0, 1.0, 1.0};  // Assuming white light
-    t_vec3 objectColor = {0.8, 0.4, 0.2}; // Example object color (red-ish)
+    t_vec3 objectColor = {1.0, 0.4, 0.2}; // Example object color (red-ish)
 
     // Ambient lighting
     float ka = 0.5;                          // Ambient reflection coefficient (between 0 and 1)
