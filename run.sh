@@ -2,6 +2,6 @@
 
 clear
 
-make all
+make re
 
 ./miniRT

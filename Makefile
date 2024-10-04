@@ -22,6 +22,7 @@ FILES = main \
 		math \
 		sphere \
 		plane	\
+		cylinder \
 
 SRCS = $(addprefix $(SRCS_DIR), $(addsuffix .c, $(FILES)))
 OBJS = $(SRCS:.c=.o)

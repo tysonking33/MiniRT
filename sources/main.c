@@ -89,8 +89,9 @@ int key_hook(int keycode, t_scene *scene)
     // Print updated camera position, yaw, and pitch
     printf("Updated Camera Position: (%f, %f, %f)\n", scene->camera->origin->x, scene->camera->origin->y, scene->camera->origin->z);
     printf("Updated Yaw: %f, Pitch: %f\n", yaw, pitch);
-    // renderSceneSphere(scene->data, scene); // Render the scene
-    renderScenePlane(scene->data, scene);
+    //renderSceneSphere(scene->data, scene); // Render the scene
+    //renderScenePlane(scene->data, scene);
+    renderSceneCylinder(scene->data, scene);
 
     mlx_put_image_to_window(scene->vars->mlx, scene->vars->win, scene->data->img, 0, 0); // Put image to window
 
@@ -161,19 +162,12 @@ void initialize_mlx(t_vars **vars, t_data **img, float width, float height)
 
 void initialize_scene_elements(t_scene *scene)
 {
-    int num_spheres = 2;
-    // Allocate memory for camera, light, and sphere
     scene->camera = (t_ray *)malloc(sizeof(t_ray));
     scene->light = (t_ray *)malloc(sizeof(t_ray));
-    scene->sphere = (t_sphere *)malloc(num_spheres * sizeof(t_sphere));
-    for (int i = 0; i < num_spheres; i++)
-    {
-        scene->sphere->origin = (t_vec3 *)malloc(sizeof(t_vec3));
-    }
 
-    if (!scene->camera || !scene->light || !scene->sphere)
+    if (!scene->camera || !scene->light)
     {
-        fprintf(stderr, "Camera/Light/Sphere Memory allocation failed\n");
+        fprintf(stderr, "Camera/Light Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -182,24 +176,66 @@ void initialize_scene_elements(t_scene *scene)
     scene->camera->direction = (t_vec3 *)malloc(sizeof(t_vec3));
     scene->light->origin = (t_vec3 *)malloc(sizeof(t_vec3));
     scene->light->direction = (t_vec3 *)malloc(sizeof(t_vec3));
-    scene->sphere->origin = (t_vec3 *)malloc(sizeof(t_vec3)); // Allocate memory for sphere's origin
 
     if (!scene->camera->origin || !scene->camera->direction ||
-        !scene->light->origin || !scene->light->direction ||
-        !scene->sphere->origin)
-    { // Check for sphere's origin allocation
+        !scene->light->origin || !scene->light->direction)
+    {
         fprintf(stderr, "Ray origin/direction Memory allocation failed\n");
         exit(EXIT_FAILURE);
     }
 
     scene->camera->origin->x = 0.0f;
     scene->camera->origin->y = 0.0f;
-    scene->camera->origin->z = -50.0f;
+    scene->camera->origin->z = 20.0f;
 
     scene->camera->direction->x = 0.0f;
     scene->camera->direction->y = 0.0f;
     scene->camera->direction->z = 1.0f;
 
+    // Initialize spheres
+    int num_spheres = 2;
+    scene->num_spheres = num_spheres;
+    scene->sphere = (t_sphere *)malloc(num_spheres * sizeof(t_sphere));
+    initialize_spheres(scene, num_spheres);
+
+    // Initialise light
+    scene->light->origin->x = 0.0f;
+    scene->light->origin->y = 0.0f;
+    scene->light->origin->z = -5.0f;
+
+    scene->light->direction->x = 0.0f;
+    scene->light->direction->y = 0.0f;
+    scene->light->direction->z = 1.0f;
+    scene->fov = 90.0f;
+
+    // Initialise planes
+    int num_planes = 1;
+    scene->num_planes = num_planes;
+    scene->plane = (t_plane *)malloc(num_planes * sizeof(t_plane));
+    initialize_planes(scene, num_planes);
+
+    // initalise cylinder
+    scene->num_cylinder = 1;
+    scene->cylinder = (t_cylinder *)malloc(scene->num_cylinder * sizeof(t_cylinder));
+    initialize_cylinder(scene, scene->num_cylinder);
+}
+
+void initialize_cylinder(t_scene *scene, int num_cylinder)
+{
+    (void)num_cylinder;
+    t_cylinder *cylinder0 = (t_cylinder *)malloc(sizeof(t_cylinder));
+    cylinder0->origin = (t_vec3 *)malloc(sizeof(t_vec3));
+    *(cylinder0->origin) = createVec3(0, 0, 0);
+    cylinder0->radius = 10.0f;
+    cylinder0->height = 10.0f;
+
+    scene->cylinder[0] = *cylinder0;
+    free(cylinder0);
+}
+
+void initialize_spheres(t_scene *scene, int num_spheres)
+{
+    (void)num_spheres;
     t_sphere *sphere0 = (t_sphere *)malloc(sizeof(t_sphere));
     sphere0->origin = (t_vec3 *)malloc(sizeof(t_vec3));
     *(sphere0->origin) = createVec3(0, 0, 0);
@@ -212,15 +248,15 @@ void initialize_scene_elements(t_scene *scene)
 
     scene->sphere[0] = *sphere0;
     scene->sphere[1] = *sphere1;
-    scene->num_spheres = num_spheres;
 
-    scene->light->origin->x = 0.0f;
-    scene->light->origin->y = 5.0f;
-    scene->light->origin->z = -20.0f;
-    scene->fov = 90.0f;
+    // Free allocated memory for sphere pointers
+    free(sphere0);
+    free(sphere1);
+}
 
-    scene->num_planes = 1;
-
+void initialize_planes(t_scene *scene, int num_planes)
+{
+    (void)num_planes;
     t_plane *plane1 = (t_plane *)malloc(sizeof(t_plane));
     plane1->origin = (t_vec3 *)malloc(sizeof(t_vec3));
     *plane1->origin = createVec3(0, 0, 0);
@@ -265,8 +301,10 @@ void initialize_scene_elements(t_scene *scene)
     crossProduct(&v1, &v2, plane1->normal);
     normalise(plane1->normal);
 
-    scene->plane = (t_plane *)malloc(scene->num_planes * sizeof(t_plane));
     scene->plane[0] = *plane1;
+
+    // Free allocated memory for plane pointers
+    free(plane1);
 }
 
 void crossProduct(t_vec3 *a, t_vec3 *b, t_vec3 *result)
@@ -310,8 +348,9 @@ int main(void)
     // Initialize scene elements (camera, light, sphere)
     initialize_scene_elements(sceneObj);
 
-    // renderSceneSphere(sceneObj->data, sceneObj); // Render the scene
-    renderScenePlane(sceneObj->data, sceneObj);
+    //renderSceneSphere(sceneObj->data, sceneObj); // Render the scene
+    //renderScenePlane(sceneObj->data, sceneObj);
+    renderSceneCylinder(sceneObj->data, sceneObj);
 
     mlx_put_image_to_window(sceneObj->vars->mlx, sceneObj->vars->win, sceneObj->data->img, 0, 0); // Put image to window
 

@@ -39,14 +39,11 @@ typedef struct s_ray
     t_vec3 *direction;
 } t_ray;
 
-
-
 typedef struct s_sphere
 {
     t_vec3 *origin;
     float radius;
 } t_sphere;
-
 
 typedef struct s_plane
 {
@@ -54,7 +51,7 @@ typedef struct s_plane
     t_vec3 *normal;
 
     /*------------plane corners------------------*/
-    t_vec3 *P1;             
+    t_vec3 *P1;
     t_vec3 *P2;
     t_vec3 *P3;
     t_vec3 *P4;
@@ -64,12 +61,20 @@ typedef struct s_plane
     t_vec3 *base_color;
     float height;
     float width;
-}   t_plane;
+} t_plane;
+
+typedef struct s_cylinder
+{
+    t_vec3 *origin;
+    float radius;
+    float height;
+    t_vec3 *normal;
+} t_cylinder;
 
 typedef struct s_scene
 {
-    t_ray * camera;
-    t_ray * light;
+    t_ray *camera;
+    t_ray *light;
     float fov;
     float width;
     float height;
@@ -79,7 +84,10 @@ typedef struct s_scene
     t_vars *vars;
     t_plane *plane;
     int num_planes;
-}   t_scene;
+
+    t_cylinder *cylinder;
+    int num_cylinder;
+} t_scene;
 
 // Function prototypes
 
@@ -93,6 +101,9 @@ void updateScene(t_scene *sceneObj);
 void clear_screen_to_black(t_scene *sceneObj);
 void crossProduct(t_vec3 *a, t_vec3 *b, t_vec3 *result);
 void normalise(t_vec3 *result);
+void initialize_planes(t_scene *scene, int num_planes);
+void initialize_spheres(t_scene *scene, int num_spheres);
+void initialize_cylinder(t_scene *scene, int num_cylinder);
 
 /*-------------------------------sphere.c--------------------------------------------------------*/
 uint32_t rgbaToHex(t_vec3 color);
@@ -104,12 +115,10 @@ t_vec3 computeSphereObjNormal(t_vec3 intersectionPoint, t_sphere sphere);
 t_vec3 computeSphereNormal(t_vec3 intersection, t_sphere sphere);
 int raySphereIntersect(t_ray *ray, t_sphere *sphere, float *t);
 
-
 /*-------------------------------generic_sphere.c--------------------------------------------------------*/
 void plotHorizontalLine(int x1, int x2, int y, t_data *img);
 void drawFilledCircle(int xc, int yc, int r, t_data *img);
 void drawSphere(t_data *img);
-
 
 /*-------------------------------plane.c--------------------------------------------------------*/
 void renderScenePlane(t_data *img, t_scene *scene);
@@ -119,5 +128,9 @@ t_vec3 raytracePlane(t_ray ray, t_plane plane, t_ray *lightObj, t_scene sceneObj
 t_vec3 vec3_mult(t_vec3 v1, t_vec3 v2);
 t_vec3 calculateShadow(t_ray ray, t_plane plane, t_ray *lightObj, t_scene sceneObj, t_vec3 intersectionPoint);
 
-
+/*-------------------------------cylinder.c--------------------------------------------------------*/
+void renderSceneCylinder(t_data *img, t_scene *scene);
+int rayCylinderIntersect(t_ray *ray, t_cylinder *cylinder, float *t);
+void findSurfaceNormal(t_scene *sceneObj, t_vec3 *intersectionPoint, t_cylinder *cylinder);
+t_vec3 raytraceCylinder(t_ray ray, t_cylinder cylinder, t_ray *lightObj, t_scene sceneObj, t_vec3 intersectionPoint);
 #endif
